@@ -1,0 +1,9 @@
+[submodule "submodules"]
+	path = submodules
+	url = https://github.com/lshk-org/jyutping-table.git
+[submodule "generate/jyutping-table"]
+	path = generate/jyutping-table
+	url = https://github.com/lshk-org/jyutping-table.git
+[submodule "generate/rime-middle-chinese"]
+	path = generate/rime-middle-chinese
+	url = https://github.com/biopolyhedron/rime-middle-chinese.git

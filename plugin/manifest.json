@@ -1,14 +1,15 @@
 {
     "manifest_version": 2,
-    "name": "Cantonese Romanizer",
-    "description": "Converts Chinese characters in a webpage to Jyutping at the press of a button.",
+    "name": "yue-romanize",
+    "description": "Converts Chinese characters in a webpage to my original romanization at the press of a button.",
     "version": "1.0",
-    "browser_action": {
-        "default_icon": "jyut6.png"
-    },
+    "browser_action": {},
     "background": {
         "scripts": [ "jquery.min.js", "charmap.js", "background.js" ]
     },
+    "content_scripts": [{
+        "css": [ "styles.css" ]
+    }],
     "permissions": [
         "tabs", "*://*/*"
     ]
