@@ -1,4 +1,4 @@
-const _charmap = {
+const mapYue = {
   "㐀": ["qȷəù"],
   "㐁": ["doū"],
   "㐂": ["ʦxən̍"],

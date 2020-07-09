@@ -1,15 +1,16 @@
 {
     "manifest_version": 2,
-    "name": "yue-romanize",
-    "description": "Converts Chinese characters in a webpage to my original romanization at the press of a button.",
+    "name": "romanize-yue",
+    "description": "Add the author's original romanization above every Chinese character in a webpage when the button pressed.",
     "version": "1.0",
     "browser_action": {},
     "background": {
         "scripts": [ "jquery.min.js", "charmap.js", "background.js" ]
     },
-    "content_scripts": [{
-        "css": [ "styles.css" ]
-    }],
+    "content_scripts": [ {
+        "matches": [ "<all_urls>" ],
+        "css": [ "style.css" ]
+    } ],
     "permissions": [
         "tabs", "*://*/*"
     ]

@@ -28,6 +28,7 @@ $(getTextNodesIn(document)).each(function(index, el) {
         div.innerHTML = jyutpings.reverse().join("<br/>");
         rt.appendChild(div);
       }
+
       ruby.appendChild(rt);
       frag.appendChild(ruby);
     }

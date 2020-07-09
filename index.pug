@@ -1,0 +1,38 @@
+- const title = "romanize-yue"
+
+head
+  title= title
+  link(rel="stylesheet", href="style.min.css")
+  script(src="romanization-emc.js")
+  script(src="romanization-yue.js")
+  script(src="romanization-cmn.js")
+  script(src="script.js")
+
+body
+  #head
+    input(type="checkbox")#single
+    label single
+    input(type="checkbox")#cyrillic
+    label cyrillic
+  #body
+    textarea#source.
+      春眠不覺曉
+      處處聞啼鳥
+      夜來風雨聲
+      花落知多少
+
+      幫滂竝明
+      非敷奉微
+      端透定泥
+      知徹澄娘
+      精清從＿心邪
+      莊初崇＿生俟
+      章昌常日書船
+      見溪群疑
+      影＿＿云曉匣
+      ＿＿＿來
+    #emc.sink
+    #yue.sink
+    #cmn.sink
+  #foot
+    a tweet
