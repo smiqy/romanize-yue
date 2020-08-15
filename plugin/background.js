@@ -1,5 +1,6 @@
-chrome.browserAction.onClicked.addListener(function(tab) {
-    chrome.tabs.executeScript(null, { file: "jquery.min.js" });
-    chrome.tabs.executeScript(null, { file: "charmap.js" });
-    chrome.tabs.executeScript(null, { file: "all.js" });
+chrome.browserAction.onClicked.addListener((tab) => {
+    for (const path of ["jquery.min.js", "romanization-yue.js", "romanization-cmn.js", "romanization-cmn-simple.js", "all.js"])
+        chrome.tabs.executeScript(null, {
+            file: path
+        });
 });

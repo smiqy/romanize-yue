@@ -6,16 +6,21 @@ head
   script(src="romanization-emc.js")
   script(src="romanization-yue.js")
   script(src="romanization-cmn.js")
+  script(src="romanization-cmn-simple.js")
   script(src="script.js")
 
 body
   #head
-    input(type="checkbox")#single
+    input(type="checkbox")#single.trigger
     label single
-    input(type="checkbox")#cyrillic
+    input(type="checkbox")#cyrillic.trigger
     label cyrillic
+    input(type="checkbox")#uppercase.trigger
+    label uppercase
+    input(type="checkbox")#simple.trigger
+    label simple
   #body
-    textarea#source.
+    textarea#source.trigger.
       春眠不覺曉
       處處聞啼鳥
       夜來風雨聲

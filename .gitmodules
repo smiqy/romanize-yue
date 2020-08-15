@@ -1,6 +1,3 @@
-[submodule "submodules"]
-	path = submodules
-	url = https://github.com/lshk-org/jyutping-table.git
 [submodule "generate/jyutping-table"]
 	path = generate/jyutping-table
 	url = https://github.com/lshk-org/jyutping-table.git
