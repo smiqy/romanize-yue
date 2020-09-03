@@ -5,6 +5,8 @@ head
   link(rel="stylesheet", href="style.min.css")
   script(src="romanization-emc.js")
   script(src="romanization-yue.js")
+  script(src="romanization-yue-simple.js")
+  script(src="romanization-yue-ipa.js")
   script(src="romanization-cmn.js")
   script(src="romanization-cmn-simple.js")
   script(src="script.js")
@@ -19,6 +21,8 @@ body
     label uppercase
     input(type="checkbox")#simple.trigger
     label simple
+    input(type="checkbox")#ipa.trigger
+    label IPA
   #body
     textarea#source.trigger.
       春眠不覺曉

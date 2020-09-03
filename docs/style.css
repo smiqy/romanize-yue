@@ -5,7 +5,6 @@
 html {
   height: 100%;
 }
-
 html body {
   margin: 0;
   height: 100%;
@@ -13,37 +12,30 @@ html body {
   color: white;
   background-color: black;
 }
-
 html body #head {
   height: 5%;
   width: 100%;
   text-align: center;
   vertical-align: bottom;
 }
-
 html body #body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 90%;
 }
-
 @media screen and (orientation: landscape) {
   html body #body {
     display: flex;
   }
 }
-
 html body #body #source, html body #body .sink {
   border: 1px solid;
-  margin: 0;
-  padding: 4px;
-  font-family: inherit;
-  font-size: inherit;
   color: inherit;
   background-color: transparent;
+  font-family: inherit;
+  font-size: inherit;
 }
-
 @media screen and (orientation: landscape) {
   html body #body #source, html body #body .sink {
     height: 100%;
@@ -54,7 +46,6 @@ html body #body #source, html body #body .sink {
     border-left: 0;
   }
 }
-
 @media screen and (orientation: portrait) {
   html body #body #source, html body #body .sink {
     height: calc(100%/4);
@@ -62,18 +53,17 @@ html body #body #source, html body #body .sink {
   }
   html body #body #source:not(:first-child), html body #body .sink:not(:first-child) {
     border-top: 0;
+    margin: 0;
+    padding: 4px;
   }
 }
-
 html body #body #source:focus, html body #body .sink:focus {
   outline: none;
 }
-
 html body #body .sink {
   white-space: pre-wrap;
   overflow: auto;
 }
-
 html body #body .sink .multiple {
   display: inline-block;
   margin-left: 2px;
@@ -85,7 +75,6 @@ html body #body .sink .multiple {
   padding-top: 4px;
   padding-left: 4px;
 }
-
 html body #body .sink .multiple .option, html body #body .sink .multiple .option:active {
   font: inherit;
   color: white;
@@ -98,45 +87,35 @@ html body #body .sink .multiple .option, html body #body .sink .multiple .option
   margin-top: 4px;
   background-color: transparent;
 }
-
 html body #body .sink .multiple .option:first-of-type, html body #body .sink .multiple .option:active:first-of-type {
   margin-top: 0;
 }
-
 html body #body .sink .yue-phonetic-0 {
   background: linear-gradient(to right, #FFF4, transparent);
 }
-
 html body #body .sink .yue-phonetic-1 {
   background: linear-gradient(to right, transparent, #FFF4);
 }
-
 html body #body .sink .yue-phonetic-3 {
   background: linear-gradient(to right, #FFF4, #FFF4);
 }
-
 html body #body .sink .cmn-phonetic-0 {
   background: linear-gradient(to right, #FFF4, #FFF4);
 }
-
 html body #body .sink .cmn-phonetic-1 {
   background: linear-gradient(to right, transparent, #FFF4);
 }
-
 html body #body .sink .cmn-phonetic-3 {
   background: linear-gradient(to right, #FFF4, transparent);
 }
-
 html body #body .sink .cmn-phonetic-4 {
   background: repeating-linear-gradient(to right, transparent, #FFF4, transparent 4px);
 }
-
 html #foot {
   height: 5%;
   width: 100%;
   text-align: center;
 }
-
 html #foot a {
   color: inherit;
 }

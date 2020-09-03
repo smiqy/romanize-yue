@@ -28,6 +28,11 @@ html
 
       #source, .sink
         border: 1px solid
+        color: inherit
+        background-color: transparent
+        font-family: inherit
+        font-size: inherit
+
         @media screen and (orientation:landscape)
           height: 100%
           width: calc(100%/4)
@@ -40,17 +45,11 @@ html
           &:not(:first-child)
             border-top: 0
 
-        margin: 0
-        padding: 4px
-
-        font-family: inherit
-        font-size: inherit
+            margin: 0
+            padding: 4px
 
         &:focus
           outline: none
-
-        color: inherit
-        background-color: transparent
 
       .sink
         white-space: pre-wrap
@@ -79,9 +78,8 @@ html
             margin-top: 4px
             &:first-of-type
               margin-top: 0
-            background-color: transparent
 
-        //.emv-phonetic-0, .emv-phonetic-1, .emv-phonetic-2, .emv-phonetic-3
+            background-color: transparent
 
         .yue-phonetic-0
           background: linear-gradient(to right, #FFF4, transparent)
@@ -100,7 +98,6 @@ html
           background: linear-gradient(to right, #FFF4, transparent)
         .cmn-phonetic-4
           background: repeating-linear-gradient(to right, transparent, #FFF4, transparent 4px)
-
 
   #foot
     height: 5%

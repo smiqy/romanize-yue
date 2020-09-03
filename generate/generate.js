@@ -344,6 +344,125 @@ ${
 };`
 );
 
+const yueToSimple = phonetic => {
+  let [_, syllable, tone] = phonetic.normalize("NFD").match(/(.+)(.)/)
+  syllable = syllable.replace(/ı/g, "i").replace(/ȷ/g, "j")
+  /*
+  if(/^[bwmdznlʣghŋjviyueøoəa]/.test(syllable))
+    tone = " " + {
+      "\u0300": "\u0316",
+      "\u0301": "\u0317",
+      "\u0304": "\u0331",
+      "\u030D": "\u0329",
+    }[tone]
+  */
+
+  tone = (
+    /^[bwmdznlʣghŋjviyueøoəa]/.test(syllable) ?
+      ["\u0300", "\u030C", "\u1DC5", "\u030F"]
+    :
+      ["\u0302", "\u0301", "\u0304", "\u030B"]
+  )[["\u0300", "\u0301", "\u0304", "\u030D"].indexOf(tone)]
+
+  syllable = syllable
+  .replace(/g/g, "c")
+  .replace(/h/g, "x")
+  .replace(/d/g, "t")
+  .replace(/ʣ/g, "ʦ")
+  .replace(/z/g, "s")
+  .replace(/b/g, "p")
+  .replace(/w/g, "f")
+  .replace(/q/g, "")
+
+  .replace(/c(?!x)/g, "g")
+  .replace(/t(?!x)/g, "d")
+  .replace(/ʦ(?![jr]?x)/g, "ʣ")
+  .replace(/p(?!x)/g, "b")
+
+  .replace(/(?<=(c|t|ʦ[jr]|p))x/g, "")
+
+  .replace(/ʣ/g, "z")
+  .replace(/c/g, "k")
+  .replace(/ʦ/g, "c")
+
+  .replace(/z[jr]/g, "ᵶ")
+  .replace(/c[jr]/g, "ꞓ")
+  .replace(/s[jr]/g, "ꞩ")
+
+  .replace(/i/g, "ı")
+  .replace(/j/g, "ȷ")
+
+  return (syllable + tone).normalize("NFC")
+}
+
+fs.writeFileSync("../docs/romanization-yue-simple.js",
+  `const mapYueSimple = {\n${
+  Object.entries(yue).map(([character, phonetics]) =>
+    `  "${character}": [${phonetics.map(phonetic => `"${yueToSimple(phonetic)}"`).join(", ")}]`).join(",\n")
+  }\n};`
+);
+
+const yueToIpa = phonetic => {
+  let [_, syllable, tone] = phonetic.normalize("NFD").match(/(.+)(.)/)
+  syllable = syllable.replace(/ı/g, "i").replace(/ȷ/g, "j")
+  tone = ["\u0300", "\u0301", "\u0304", "\u030D"].indexOf(tone)
+  voiced = /^[bwmdznlʣghŋjviyueøoəa]/.test(syllable)
+
+  syllable = syllable
+    .replace(/i/, "iː")
+    .replace(/oi$/, "ɔːy")
+    .replace(/o(?!u$)/, "ɔː")
+    .replace(/e(?!i$)/, "ɛː")
+    .replace(/y/, "yː")
+    .replace(/øi$/, "ɵy")
+    .replace(/ø(?=n$)/, "ɵ")
+    .replace(/ø/, "œː")
+
+    .replace(/^q/, "")
+
+    .replace(/^[gc]/, "k")
+    .replace(/^[hx]/, "h")
+    .replace(/x/, "ʰ")
+
+    .replace(/^[dt]/, "t")
+
+    .replace(/^[ʣʦ]r/, "ʈʂ")
+    .replace(/^[zs]r/, "ʂ")
+
+    .replace(/^[ʣʦ]j/, "tɕ")
+    .replace(/^[zs]j/, "ɕ")
+    .replace(/^nj/, "ɲ")
+
+    .replace(/^[ʣʦ]/, "ts")
+
+    .replace(/^[wf]/, "f")
+    .replace(/^v/, "W")
+    .replace(/v/, "ʷ")
+
+    .replace(/^m$/, "m̩")
+    .replace(/^ŋ$/, "ŋ̍")
+
+  if (tone == 3)
+    syllable = syllable
+    .replace(/(?<!^)ŋ$/, "k̚")
+    .replace(/(?<!^)n$/, "t̚")
+    .replace(/(?<!^)m$/, "p̚")
+
+  const short = !/ː/.test(syllable)
+
+  tone = (voiced ? ["˧˩", "˩˧", "˩", "˩"] : ["˥˧", "˧˥", "˧", short ? "˥" : "˧"])[tone]
+
+  return (syllable + tone).normalize("NFC")
+}
+
+
+fs.writeFileSync("../docs/romanization-yue-ipa.js",
+  `const mapYueIpa = {\n${
+  Object.entries(yue).map(([character, phonetics]) =>
+    `  "${character}": [${phonetics.map(phonetic => `"${yueToIpa(phonetic)}"`).join(", ")}]`).join(",\n")
+  }\n};`
+);
+
 // cmn
 const pinyin = require("pinyin/data/dict-zi");
 let cmn = {};
@@ -421,20 +540,20 @@ for (const [k, v] of Object.entries(pinyin)) {
 
           if (emcs.some(emc => /^[ʣʦsz]r/.test(emc[0])))
             syllable = syllable
-            .replace(/^g/, "ʣr")
-            .replace(/^k/, "ʦr")
-            .replace(/^x/, "sr")
+            .replace(/^g(?=[iy])/, "ʣr")
+            .replace(/^c(?=[iy])/, "ʦr")
+            .replace(/^x(?=[iy])/, "sr")
           else if (emcs.some(emc => /^[ʣʦsz]j/.test(emc[0])))
             syllable = syllable
-            .replace(/^g/, "ʣj")
-            .replace(/^k/, "ʦj")
-            .replace(/^x/, "sj")
+            .replace(/^g(?=[iy])/, "ʣj")
+            .replace(/^c(?=[iy])/, "ʦj")
+            .replace(/^x(?=[iy])/, "sj")
             .replace(/(?<=^[ʣʦs])r/, "j")
           else if (emcs.some(emc => /^[ʣʦsz]/.test(emc[0])))
             syllable = syllable
-            .replace(/^g/, "ʣ")
-            .replace(/^k/, "ʦ")
-            .replace(/^x/, "s")
+            .replace(/^g(?=[iy])/, "ʣ")
+            .replace(/^c(?=[iy])/, "ʦ")
+            .replace(/^x(?=[iy])/, "s")
 
           for (const emc of emcs) {
             if (/[ŋnm]$/.test(emc[0]) && emc[1] == 3) {
@@ -448,14 +567,6 @@ for (const [k, v] of Object.entries(pinyin)) {
           }
         }
 
-        /*
-        syllable = syllable
-          .replace(/^ʣ[jr]/g, "ʤ")
-          .replace(/^ʦ[jr]/g, "ʧ")
-          .replace(/^z[jr]/g, "ʒ")
-          .replace(/^s[jr]/g, "ʃ")
-        */
-
         syllable = syllable
           .replace(/i/g, "ı")
           .replace(/j/g, "ȷ")
@@ -468,128 +579,47 @@ for (const [k, v] of Object.entries(pinyin)) {
 }
 
 fs.writeFileSync("../docs/romanization-cmn.js",
-  `const mapCmn = {
-${
+  `const mapCmn = {\n${
   Object.entries(cmn)
   .map(([character, phonetics]) =>
     `  "${character}": [${phonetics.map(s => `"${s}"`).join(", ")}]`).join(",\n")
-}
-};`
+}\n};`
 );
 
-let cmnSimple = {};
-for (const [k, v] of Object.entries(pinyin)) {
-  const c = String.fromCharCode(k)
-  if (c.match(/\p{sc=Han}/u)) {
-    if (!cmnSimple[c])
-      cmnSimple[c] = [];
+const cmnToSimple = phonetic =>
+  phonetic
+  .normalize("NFD")
+  .replace(/ı/g, "i")
+  .replace(/ȷ/g, "j")
 
-    const addition =
-      v.split(",")
-      .map(phonetic => {
-        phonetic = phonetic
-          .normalize("NFD")
+  .replace(/e(?=[ŋnm])/, "")
+  .replace(/(?=[iuy])e(?=[iu])/, "")
+  .replace(/c/g, "k")
+  .replace(/ʣ/g, "z")
+  .replace(/ʦ/g, "c")
 
-        const tone = {
-          "\u0304": "\u0301",
-          "\u0301": "\u030C",
-          "\u030C": "\u0300",
-          "\u0300": "\u0302",
-          null: "\u0307"
-        } [phonetic.match(/[\u0304\u0301\u030C\u0300]/)]
+  .replace(/z[rj]/, "ẓ")
+  .replace(/c[rj]/, "c̣")
+  .replace(/s[rj]/, "ṣ")
 
-        let syllable = reduceReplace(phonetic.replace(/[\u0304\u0301\u030C\u0300]/, "").normalize("NFC"), [
-          [/^ê$/, "i\u032Fe"],
-          [/^o$/, "u\u032Fe"],
+  .replace(/[ktp](?=.$)/, "")
 
-          [/ng$/, "ŋ"],
-          [/(?<=[zcs])h/, "\u0323"],
-          [/(?<=[zcs\u0323r])i$/, ""],
-
-          [/(?<=^[bpmf])o/, "uo"],
-          [/(?<=^[jqx])u/, "ü"],
-          [/^j/, "g"],
-          [/^q/, "k"],
-          [/^h/, "x"],
-
-          [/^yi/, "i"],
-          [/^yu/, "ü"],
-          [/^wu/, "u"],
-
-          [/y/, "i"],
-          [/ü/, "y"],
-          [/w/, "u"],
-
-          [/ioŋ$/, "yeŋ"],
-          [/ao$/, "au"],
-          [/ou$/, "eu"],
-          [/uo$/, "ue"],
-          [/(?<=[iy])(?=[ŋn]$)/, "e"],
-          [/iu$/, "ieu"],
-          [/ui$/, "uei"],
-          [/un$/, "uen"],
-          [/oŋ$/, "ueŋ"],
-        ])
-
-
-        const emcs = emc[c];
-        if (emcs && emcs.length >= 1) {
-          if (emcs.some(emc => /^m/.test(emc[0])))
-            syllable = syllable.replace(/^(?=u)/, "m")
-          else if (emcs.some(emc => /^ŋ/.test(emc[0])))
-            syllable = syllable.replace(/^(?=[iyuea])/, "ŋ")
-
-          else if (emcs.some(emc => /^[ʣʦsz][jr]/.test(emc[0])))
-            syllable = syllable
-            .replace(/^g(?=[iy])/, "z\u0323")
-            .replace(/^k(?=[iy])/, "c\u0323")
-            .replace(/^x(?=[iy])/, "s\u0323")
-          else if (emcs.some(emc => /^[ʣʦsz]/.test(emc[0])))
-            syllable = syllable
-            .replace(/^g(?=[iy])/, "z")
-            .replace(/^k(?=[iy])/, "c")
-            .replace(/^x(?=[iy])/, "s")
-
-          /*
-          else if (emcs.some(emc => /ŋ$/.test(emc[0]) && emc[1] == 3))
-            syllable = syllable + "k"
-          else if (emcs.some(emc => /n$/.test(emc[0]) && emc[1] == 3))
-            syllable = syllable + "t"
-          else if (emcs.some(emc => /m$/.test(emc[0]) && emc[1] == 3))
-            syllable = syllable + "p"
-          */
-
-          else if (emcs.some(emc => /m$/.test(emc[0])))
-            syllable = syllable.replace(/n$/, "m")
-
-        }
-
-        syllable = reduceReplace(syllable, [
-          [/e(?=[mnŋ])/, ""],
-          [/(?<=[iuy])e(?=[iu])/, ""],
-          [/i/, "ı"],
-        ])
-
-        return (syllable + tone).normalize("NFC")
-      });
-
-    cmnSimple[c] = cmnSimple[c].concat(addition)
-  }
-}
+  .replace(/i/g, "ı")
+  .replace(/j/g, "ȷ")
+  .normalize("NFC")
 
 fs.writeFileSync("../docs/romanization-cmn-simple.js",
-  `const mapCmnSimple = {
-${
-  Object.entries(cmnSimple)
+  `const mapCmnSimple = {\n${
+  Object.entries(cmn)
   .map(([character, phonetics]) =>
-    `  "${character}": [${phonetics.map(s => `"${s}"`).join(", ")}]`).join(",\n")
-}
-};`
+    `  "${character}": [${phonetics.map(s => `"${cmnToSimple(s)}"`).join(", ")}]`).join(",\n")
+}\n};`
 );
 
-for (const lang of ["yue", "cmn", "cmn-simple"])
-  fs.copyFile(`../docs/romanization-${lang}.js`, `../plugin/romanization-${lang}.js`, err => {
-    if (err) throw err;
-  })
+for(const lang of ["yue", "cmn"])
+  for(const suffix of ["", "-simple", "-ipa"])
+    fs.copyFile(`../docs/romanization-${lang}${suffix}.js`, `../plugin/romanization-${lang}${suffix}.js`, err => {
+      if (err) console.log(err)
+    })
 
-console.log([..."成功"].map(c => yue[c][0]).join(""))
+console.log([..."完了"].map(c => yue[c][0]).join(""))

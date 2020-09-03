@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const sinkCmn = document.getElementById("cmn");
   const single = document.getElementById("single");
   const simple = document.getElementById("simple");
+  const ipa = document.getElementById("ipa");
   const cyrillic = document.getElementById("cyrillic");
   const uppercase = document.getElementById("uppercase");
 
@@ -31,9 +32,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const update = event => {
     const sourceText = convertSym(source.value)
-    sinkEmc.innerHTML = convert("emc", sourceText, simple.checked) //.replace(/[a-zıȷʦʣŋ]+[\u0304\u0301\u0300\u030D]/g, );
-    sinkYue.innerHTML = convert("yue", sourceText, simple.checked)
-    sinkCmn.innerHTML = convert("cmn", sourceText, simple.checked)
+    sinkEmc.innerHTML = convert("emc", sourceText, simple.checked, ipa.checked) //.replace(/[a-zıȷʦʣŋ]+[\u0304\u0301\u0300\u030D]/g, );
+    sinkYue.innerHTML = convert("yue", sourceText, simple.checked, ipa.checked)
+    sinkCmn.innerHTML = convert("cmn", sourceText, simple.checked, ipa.checked)
 
     for (const option of document.querySelectorAll(".option")) {
       option.addEventListener("click", select);
@@ -72,6 +73,8 @@ const convertSym = s =>
 const maps = {
   emc: mapEmc,
   yue: mapYue,
+  yueSimple: mapYueSimple,
+  yueIpa: mapYueIpa,
   cmn: mapCmn,
   cmnSimple: mapCmnSimple,
 }
@@ -82,11 +85,17 @@ const tones = {
   cmn: "\u0301\u030C\u0300\u0302\u0307",
 }
 
-const convert = (lang, s, isSimple) =>
+const convert = (lang, s, isSimple, isIpa) =>
   s.replace(
     /\p{sc=Han}/ug,
     character => {
-      let phonetics = (isSimple && maps[lang + "Simple"] ? maps[lang + "Simple"] : maps[lang])[character]
+      let phonetics = (
+        isSimple && maps[lang + "Simple"] ?
+        maps[lang + "Simple"] :
+        isIpa && maps[lang + "Ipa"] ?
+        maps[lang + "Ipa"] :
+        maps[lang]
+      )[character]
 
       if (!phonetics) {
         return character;

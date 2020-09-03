@@ -52,7 +52,7 @@ var textEmcNew = textEmc.split("\n").filter(function (line) {
 
     return acc.replace(x, y);
   }, syllable);
-  return syllable + tone;
+  return (syllable + tone).normalize("NFC");
 });
 var emc = {};
 textEmcNew.split("\n").map(function (line) {
@@ -239,92 +239,79 @@ textYue.trim().split("\r\n").slice(1).map(function (line) {
         return element == phonetic.replace(/^l/, "n");
       }) || yue[character].some(function (element) {
         return element.replace(/.$/, "") == phonetic.replace(/^ql(.+).$/, "n$1");
-      }) || yue[character].includes(phonetic.replace(/(?<=[cg]x?)/, "v"))) void 0; //console.log(`exclude: ${character} [${yue[character]}] ${phonetic}`);
-      else yue[character].push(phonetic);
+      }) || yue[character].includes(phonetic.replace(/(?<=[cg]x?)/, "v"))) void 0;else yue[character].push(phonetic);
     } else yue[character] = [phonetic];
   }
 });
-
-var _loop3 = function _loop3() {
-  var _Object$entries$_i = _slicedToArray(_Object$entries[_i4], 2),
-      character = _Object$entries$_i[0],
-      phonetics = _Object$entries$_i[1];
-
-  var _iteratorNormalCompletion = true;
-  var _didIteratorError = false;
-  var _iteratorError = undefined;
-
-  try {
-    var _loop5 = function _loop5() {
-      var phonetic = _step.value;
-      if (/^[ŋnml]/.test(phonetic)) yue[character] = phonetics.filter(function (element) {
-        return element != "q" + phonetic;
-      });
-    };
-
-    for (var _iterator = phonetics[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      _loop5();
-    }
-  } catch (err) {
-    _didIteratorError = true;
-    _iteratorError = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-        _iterator["return"]();
-      }
-    } finally {
-      if (_didIteratorError) {
-        throw _iteratorError;
-      }
-    }
-  }
-
-  var _iteratorNormalCompletion2 = true;
-  var _didIteratorError2 = false;
-  var _iteratorError2 = undefined;
-
-  try {
-    var _loop6 = function _loop6() {
-      var phonetic = _step2.value;
-      if (/^[gdʣb](?!x)/.test(phonetic)) yue[character] = phonetics.filter(function (element) {
-        return element != phonetic.charAt(0) + "x" + phonetics.slice(1);
-      });
-      if (/^[ctʦp]x/.test(phonetic)) yue[character] = phonetics.filter(function (element) {
-        return element != voice(phonetic.charAt(0)) + phonetics.slice(1);
-      });
-    };
-
-    for (var _iterator2 = phonetics[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-      _loop6();
-    }
-  } catch (err) {
-    _didIteratorError2 = true;
-    _iteratorError2 = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
-        _iterator2["return"]();
-      }
-    } finally {
-      if (_didIteratorError2) {
-        throw _iteratorError2;
-      }
-    }
-  }
-};
-
-for (var _i4 = 0, _Object$entries = Object.entries(yue); _i4 < _Object$entries.length; _i4++) {
-  _loop3();
-}
-
 fs.writeFileSync("../docs/romanization-yue.js", "const mapYue = {\n".concat(Object.entries(yue).map(function (_ref15) {
   var _ref16 = _slicedToArray(_ref15, 2),
       character = _ref16[0],
       phonetics = _ref16[1];
 
-  return "  \"".concat(character, "\": [").concat(phonetics.map(function (s) {
-    return "\"".concat(s, "\"");
+  return "  \"".concat(character, "\": [").concat(phonetics.map(function (phonetic) {
+    return "\"".concat(phonetic, "\"");
+  }).join(", "), "]");
+}).join(",\n"), "\n};"));
+
+var yueToSimple = function yueToSimple(phonetic) {
+  var _phonetic$normalize$m = phonetic.normalize("NFD").match(/(.+)(.)/),
+      _phonetic$normalize$m2 = _slicedToArray(_phonetic$normalize$m, 3),
+      _ = _phonetic$normalize$m2[0],
+      syllable = _phonetic$normalize$m2[1],
+      tone = _phonetic$normalize$m2[2];
+
+  syllable = syllable.replace(/ı/g, "i").replace(/ȷ/g, "j");
+  /*
+  if(/^[bwmdznlʣghŋjviyueøoəa]/.test(syllable))
+    tone = " " + {
+      "\u0300": "\u0316",
+      "\u0301": "\u0317",
+      "\u0304": "\u0331",
+      "\u030D": "\u0329",
+    }[tone]
+  */
+
+  tone = (/^[bwmdznlʣghŋjviyueøoəa]/.test(syllable) ? ["\u0300", "\u030C", "\u1DC5", "\u030F"] : ["\u0302", "\u0301", "\u0304", "\u030B"])[["\u0300", "\u0301", "\u0304", "\u030D"].indexOf(tone)];
+  syllable = syllable.replace(/g/g, "c").replace(/h/g, "x").replace(/d/g, "t").replace(/ʣ/g, "ʦ").replace(/z/g, "s").replace(/b/g, "p").replace(/w/g, "f").replace(/q/g, "").replace(/c(?!x)/g, "g").replace(/t(?!x)/g, "d").replace(/ʦ(?![jr]?x)/g, "ʣ").replace(/p(?!x)/g, "b").replace(/(?<=(c|t|ʦ[jr]|p))x/g, "").replace(/ʣ/g, "z").replace(/c/g, "k").replace(/ʦ/g, "c").replace(/z[jr]/g, "ᵶ").replace(/c[jr]/g, "ꞓ").replace(/s[jr]/g, "ꞩ").replace(/i/g, "ı").replace(/j/g, "ȷ");
+  return (syllable + tone).normalize("NFC");
+};
+
+fs.writeFileSync("../docs/romanization-yue-simple.js", "const mapYueSimple = {\n".concat(Object.entries(yue).map(function (_ref17) {
+  var _ref18 = _slicedToArray(_ref17, 2),
+      character = _ref18[0],
+      phonetics = _ref18[1];
+
+  return "  \"".concat(character, "\": [").concat(phonetics.map(function (phonetic) {
+    return "\"".concat(yueToSimple(phonetic), "\"");
+  }).join(", "), "]");
+}).join(",\n"), "\n};"));
+
+var yueToIpa = function yueToIpa(phonetic) {
+  var _phonetic$normalize$m3 = phonetic.normalize("NFD").match(/(.+)(.)/),
+      _phonetic$normalize$m4 = _slicedToArray(_phonetic$normalize$m3, 3),
+      _ = _phonetic$normalize$m4[0],
+      syllable = _phonetic$normalize$m4[1],
+      tone = _phonetic$normalize$m4[2];
+
+  syllable = syllable.replace(/ı/g, "i").replace(/ȷ/g, "j");
+  tone = ["\u0300", "\u0301", "\u0304", "\u030D"].indexOf(tone);
+  voiced = /^[bwmdznlʣghŋjviyueøoəa]/.test(syllable);
+  syllable = syllable.replace(/i/, "iː").replace(/oi$/, "ɔːy").replace(/o(?!u$)/, "ɔː").replace(/e(?!i$)/, "ɛː").replace(/y/, "yː").replace(/øi$/, "ɵy").replace(/ø(?=n$)/, "ɵ").replace(/ø/, "œː").replace(/^q/, "").replace(/^[gc]/, "k").replace(/^[hx]/, "h").replace(/x/, "ʰ").replace(/^[dt]/, "t").replace(/^[ʣʦ]r/, "ʈʂ").replace(/^[zs]r/, "ʂ").replace(/^[ʣʦ]j/, "tɕ").replace(/^[zs]j/, "ɕ").replace(/^nj/, "ɲ").replace(/^[ʣʦ]/, "ts").replace(/^[wf]/, "f").replace(/^v/, "W").replace(/v/, "ʷ").replace(/^m$/, "m̩").replace(/^ŋ$/, "ŋ̍");
+  if (tone == 3) syllable = syllable.replace(/(?<!^)ŋ$/, "k̚").replace(/(?<!^)n$/, "t̚").replace(/(?<!^)m$/, "p̚");
+
+  var _short = !/ː/.test(syllable);
+
+  tone = (voiced ? ["˧˩", "˩˧", "˩", "˩"] : ["˥˧", "˧˥", "˧", _short ? "˥" : "˧"])[tone];
+  return (syllable + tone).normalize("NFC");
+};
+
+fs.writeFileSync("../docs/romanization-yue-ipa.js", "const mapYueIpa = {\n".concat(Object.entries(yue).map(function (_ref19) {
+  var _ref20 = _slicedToArray(_ref19, 2),
+      character = _ref20[0],
+      phonetics = _ref20[1];
+
+  return "  \"".concat(character, "\": [").concat(phonetics.map(function (phonetic) {
+    return "\"".concat(yueToIpa(phonetic), "\"");
   }).join(", "), "]");
 }).join(",\n"), "\n};")); // cmn
 
@@ -332,17 +319,16 @@ var pinyin = require("pinyin/data/dict-zi");
 
 var cmn = {};
 
-var _loop4 = function _loop4() {
-  var _Object$entries2$_i = _slicedToArray(_Object$entries2[_i5], 2),
-      k = _Object$entries2$_i[0],
-      v = _Object$entries2$_i[1];
+var _loop3 = function _loop3() {
+  var _Object$entries$_i = _slicedToArray(_Object$entries[_i4], 2),
+      k = _Object$entries$_i[0],
+      v = _Object$entries$_i[1];
 
   var c = String.fromCharCode(k);
 
   if (c.match(/(?:[\u2E80-\u2E99\u2E9B-\u2EF3\u2F00-\u2FD5\u3005\u3007\u3021-\u3029\u3038-\u303B\u3400-\u4DB5\u4E00-\u9FEF\uF900-\uFA6D\uFA70-\uFAD9]|[\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879][\uDC00-\uDFFF]|\uD869[\uDC00-\uDED6\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF34\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D])/)) {
     if (!cmn[c]) cmn[c] = [];
-
-    var _addition = v.split(",").map(function (phonetic) {
+    var addition = v.split(",").map(function (phonetic) {
       phonetic = phonetic.normalize("NFD");
       var tone = {
         "\u0304": "\u0301",
@@ -368,18 +354,18 @@ var _loop4 = function _loop4() {
         })) syllable = syllable.replace(/^r/, "j").replace(/^er$/, "ej");
         if (emcs.some(function (emc) {
           return /^[ʣʦsz]r/.test(emc[0]);
-        })) syllable = syllable.replace(/^g/, "ʣr").replace(/^k/, "ʦr").replace(/^x/, "sr");else if (emcs.some(function (emc) {
+        })) syllable = syllable.replace(/^g(?=[iy])/, "ʣr").replace(/^c(?=[iy])/, "ʦr").replace(/^x(?=[iy])/, "sr");else if (emcs.some(function (emc) {
           return /^[ʣʦsz]j/.test(emc[0]);
-        })) syllable = syllable.replace(/^g/, "ʣj").replace(/^k/, "ʦj").replace(/^x/, "sj").replace(/(?<=^[ʣʦs])r/, "j");else if (emcs.some(function (emc) {
+        })) syllable = syllable.replace(/^g(?=[iy])/, "ʣj").replace(/^c(?=[iy])/, "ʦj").replace(/^x(?=[iy])/, "sj").replace(/(?<=^[ʣʦs])r/, "j");else if (emcs.some(function (emc) {
           return /^[ʣʦsz]/.test(emc[0]);
-        })) syllable = syllable.replace(/^g/, "ʣ").replace(/^k/, "ʦ").replace(/^x/, "s");
-        var _iteratorNormalCompletion3 = true;
-        var _didIteratorError3 = false;
-        var _iteratorError3 = undefined;
+        })) syllable = syllable.replace(/^g(?=[iy])/, "ʣ").replace(/^c(?=[iy])/, "ʦ").replace(/^x(?=[iy])/, "s");
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
 
         try {
-          for (var _iterator3 = emcs[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-            var _emc = _step3.value;
+          for (var _iterator = emcs[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var _emc = _step.value;
 
             if (/[ŋnm]$/.test(_emc[0]) && _emc[1] == 3) {
               syllable += {
@@ -391,95 +377,67 @@ var _loop4 = function _loop4() {
             }
           }
         } catch (err) {
-          _didIteratorError3 = true;
-          _iteratorError3 = err;
+          _didIteratorError = true;
+          _iteratorError = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
-              _iterator3["return"]();
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
             }
           } finally {
-            if (_didIteratorError3) {
-              throw _iteratorError3;
+            if (_didIteratorError) {
+              throw _iteratorError;
             }
           }
         }
       }
-      /*
-      syllable = syllable
-        .replace(/^ʣ[jr]/g, "ʤ")
-        .replace(/^ʦ[jr]/g, "ʧ")
-        .replace(/^z[jr]/g, "ʒ")
-        .replace(/^s[jr]/g, "ʃ")
-      */
-
 
       syllable = syllable.replace(/i/g, "ı").replace(/j/g, "ȷ");
-      return syllable + tone;
+      return (syllable + tone).normalize("NFC");
     });
-
-    cmn[c] = cmn[c].concat(_addition);
+    cmn[c] = cmn[c].concat(addition);
   }
 };
 
-for (var _i5 = 0, _Object$entries2 = Object.entries(pinyin); _i5 < _Object$entries2.length; _i5++) {
-  _loop4();
+for (var _i4 = 0, _Object$entries = Object.entries(pinyin); _i4 < _Object$entries.length; _i4++) {
+  _loop3();
 }
 
-fs.writeFileSync("../docs/romanization-cmn.js", "const mapCmn = {\n".concat(Object.entries(cmn).map(function (_ref17) {
-  var _ref18 = _slicedToArray(_ref17, 2),
-      character = _ref18[0],
-      phonetics = _ref18[1];
-
-  return "  \"".concat(character, "\": [").concat(phonetics.map(function (s) {
-    return "\"".concat(s, "\"");
-  }).join(", "), "]");
-}).join(",\n"), "\n};")); // cmn
-
-var cmnSimple = {};
-
-for (var _i6 = 0, _Object$entries3 = Object.entries(pinyin); _i6 < _Object$entries3.length; _i6++) {
-  var _Object$entries3$_i = _slicedToArray(_Object$entries3[_i6], 2),
-      k = _Object$entries3$_i[0],
-      v = _Object$entries3$_i[1];
-
-  var c = String.fromCharCode(k);
-
-  if (c.match(/(?:[\u2E80-\u2E99\u2E9B-\u2EF3\u2F00-\u2FD5\u3005\u3007\u3021-\u3029\u3038-\u303B\u3400-\u4DB5\u4E00-\u9FEF\uF900-\uFA6D\uFA70-\uFAD9]|[\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879][\uDC00-\uDFFF]|\uD869[\uDC00-\uDED6\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF34\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D])/)) {
-    if (!cmnSimple[c]) cmnSimple[c] = [];
-    var addition = v.split(",").map(function (phonetic) {
-      phonetic = phonetic.normalize("NFD");
-      var tone = {
-        "\u0304": "\u0301",
-        "\u0301": "\u030C",
-        "\u030C": "\u0300",
-        "\u0300": "\u0302",
-        "null": "\u0307"
-      }[phonetic.match(/[\u0304\u0301\u030C\u0300]/)];
-      var syllable = reduceReplace(phonetic.replace(/[\u0304\u0301\u030C\u0300]/, "").normalize("NFC"), [[/ng$/, "ŋ"], [/(?<=[zcs])h/, "\u0323"], [/(?<=[\u0323r])i$/, ""], [/(?<=^[bpmf])o/, "uo"], [/(?<=^[jqx])u/, "ü"], [/^j/, "g"], [/^q/, "k"], [/^h/, "x"], [/^yi/, "i"], [/^yu/, "ü"], [/^wu/, "u"], [/y/, "i"], [/ü/, "y"], [/w/, "u"], [/ioŋ$/, "yeŋ"], [/ao$/, "au"], [/ou$/, "eu"], [/uo$/, "ue"], [/(?<=[iy])(?=[ŋn]$)/, "e"], [/iu$/, "ieu"], [/ui$/, "uei"], [/un$/, "uen"], [/oŋ$/, "ueŋ"], [/(?<=[iuy])e(?=[iunŋ])/, ""], ["b", "б"], ["p", "п"], ["f", "ф"], ["m", "м"], ["d", "д"], ["t", "т"], ["n", "н"], ["l", "л"], ["z\u0323", "ж"], ["c\u0323", "ч"], ["s\u0323", "ш"], ["r\u0323", "р"], ["z", "ѕ"], ["c", "ц"], ["s", "с"], ["g", "г"], ["k", "к"], ["x", "х"], ["ŋ", "ӈ"], ["i", "и"], ["y", "ѵ"], ["u", "у"], ["e", "э"], ["a", "а"]]);
-      return syllable + tone;
-    });
-    cmnSimple[c] = cmnSimple[c].concat(addition);
-  }
-}
-
-fs.writeFileSync("../docs/romanization-cmn-simple.js", "const mapCmnSimple = {\n".concat(Object.entries(cmnSimple).map(function (_ref19) {
-  var _ref20 = _slicedToArray(_ref19, 2),
-      character = _ref20[0],
-      phonetics = _ref20[1];
+fs.writeFileSync("../docs/romanization-cmn.js", "const mapCmn = {\n".concat(Object.entries(cmn).map(function (_ref21) {
+  var _ref22 = _slicedToArray(_ref21, 2),
+      character = _ref22[0],
+      phonetics = _ref22[1];
 
   return "  \"".concat(character, "\": [").concat(phonetics.map(function (s) {
     return "\"".concat(s, "\"");
   }).join(", "), "]");
 }).join(",\n"), "\n};"));
 
-_toConsumableArray("成功").forEach(function (c) {
-  return console.log(yue[c].join(" "));
-});
+var cmnToSimple = function cmnToSimple(phonetic) {
+  return phonetic.normalize("NFD").replace(/ı/g, "i").replace(/ȷ/g, "j").replace(/e(?=[ŋnm])/, "").replace(/(?=[iuy])e(?=[iu])/, "").replace(/c/g, "k").replace(/ʣ/g, "z").replace(/ʦ/g, "c").replace(/z[rj]/, "ẓ").replace(/c[rj]/, "c̣").replace(/s[rj]/, "ṣ").replace(/[ktp](?=.$)/, "").replace(/i/g, "ı").replace(/j/g, "ȷ").normalize("NFC");
+};
 
-for (var _i7 = 0, _arr4 = ["yue", "cmn", "cmn-simple"]; _i7 < _arr4.length; _i7++) {
-  var lang = _arr4[_i7];
-  fs.copyFile("../docs/romanization-".concat(lang, ".js"), "../plugin/romanization-".concat(lang, ".js"), function (err) {
-    if (err) throw err;
-  });
+fs.writeFileSync("../docs/romanization-cmn-simple.js", "const mapCmnSimple = {\n".concat(Object.entries(cmn).map(function (_ref23) {
+  var _ref24 = _slicedToArray(_ref23, 2),
+      character = _ref24[0],
+      phonetics = _ref24[1];
+
+  return "  \"".concat(character, "\": [").concat(phonetics.map(function (s) {
+    return "\"".concat(cmnToSimple(s), "\"");
+  }).join(", "), "]");
+}).join(",\n"), "\n};"));
+
+for (var _i5 = 0, _arr4 = ["yue", "cmn"]; _i5 < _arr4.length; _i5++) {
+  var lang = _arr4[_i5];
+
+  for (var _i6 = 0, _arr5 = ["", "-simple", "-ipa"]; _i6 < _arr5.length; _i6++) {
+    var suffix = _arr5[_i6];
+    fs.copyFile("../docs/romanization-".concat(lang).concat(suffix, ".js"), "../plugin/romanization-".concat(lang).concat(suffix, ".js"), function (err) {
+      if (err) console.log(err);
+    });
+  }
 }
+
+console.log(_toConsumableArray("完了").map(function (c) {
+  return yue[c][0];
+}).join(""));
