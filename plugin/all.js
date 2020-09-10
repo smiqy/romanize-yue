@@ -1,4 +1,4 @@
-const lang = "cmnSimple"
+const lang = "yue"
 const cyrillic = false
 
 // Get all the text nodes in the document, and replace any Chinese characters found with Jyutping.
@@ -9,7 +9,7 @@ $(getTextNodesIn(document)).each((index, el) => {
   let frag = document.createDocumentFragment();
 
   const charmap = {
-    yue: mapYue,
+    yue: mapYueStandard,
     cmn: mapCmn,
     cmnSimple: mapCmnSimple
   } [lang]

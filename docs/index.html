@@ -2,12 +2,18 @@
 <head>
   <title>romanize-yue</title>
   <link rel="stylesheet" href="style.min.css"/>
-  <script src="romanization-emc.js"></script>
-  <script src="romanization-yue.js"></script>
-  <script src="romanization-yue-simple.js"></script>
-  <script src="romanization-yue-ipa.js"></script>
-  <script src="romanization-cmn.js"></script>
-  <script src="romanization-cmn-simple.js"></script>
+  <!--
+  for lang in ["emc", "yue", "cmn"]
+    for key in ["standard", "simple", "ascii", "ipa"]
+      script(src=`romanization-${lang}-${key}.js`)
+  -->
+  <script src="romanization/emc-standard.js"></script>
+  <script src="romanization/yue-standard.js"></script>
+  <script src="romanization/yue-simple.js"></script>
+  <script src="romanization/yue-ipa.js"></script>
+  <script src="romanization/yue-ascii.js"></script>
+  <script src="romanization/cmn-standard.js"></script>
+  <script src="romanization/cmn-simple.js"></script>
   <script src="script.js"></script>
 </head>
 <body>
@@ -18,10 +24,12 @@
     <label>cyrillic</label>
     <input class="trigger" type="checkbox" id="uppercase"/>
     <label>uppercase</label>
-    <input class="trigger" type="checkbox" id="simple"/>
-    <label>simple</label>
-    <input class="trigger" type="checkbox" id="ipa"/>
-    <label>IPA</label>
+    <select class="trigger" id="alphabet">
+      <option value="standard">standard</option>
+      <option value="simple">simple</option>
+      <option value="ipa">IPA</option>
+      <option value="ascii">ASCII</option>
+    </select>
   </div>
   <div id="body">
     <textarea class="trigger" id="source">春眠不覺曉

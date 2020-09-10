@@ -8,7 +8,9 @@ html {
 html body {
   margin: 0;
   height: 100%;
-  font-family: "Helvetica Neue", "Noto Sans", sans-serif;
+  font-size: 14pt;
+  font-family: "Helvetica Neue", "Noto Sans CJK", "Noto Sans", sans-serif;
+  font-weight: lighter;
   color: white;
   background-color: black;
 }
@@ -118,4 +120,14 @@ html #foot {
 }
 html #foot a {
   color: inherit;
+}
+
+select, option {
+  color: inherit;
+  background-color: inherit;
+  font: inherit;
+}
+
+option {
+  background-color: black;
 }

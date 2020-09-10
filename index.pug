@@ -3,12 +3,18 @@
 head
   title= title
   link(rel="stylesheet", href="style.min.css")
-  script(src="romanization-emc.js")
-  script(src="romanization-yue.js")
-  script(src="romanization-yue-simple.js")
-  script(src="romanization-yue-ipa.js")
-  script(src="romanization-cmn.js")
-  script(src="romanization-cmn-simple.js")
+
+  //
+    for lang in ["emc", "yue", "cmn"]
+      for key in ["standard", "simple", "ascii", "ipa"]
+        script(src=`romanization-${lang}-${key}.js`)
+  script(src="romanization/emc-standard.js")
+  script(src="romanization/yue-standard.js")
+  script(src="romanization/yue-simple.js")
+  script(src="romanization/yue-ipa.js")
+  script(src="romanization/yue-ascii.js")
+  script(src="romanization/cmn-standard.js")
+  script(src="romanization/cmn-simple.js")
   script(src="script.js")
 
 body
@@ -19,10 +25,11 @@ body
     label cyrillic
     input(type="checkbox")#uppercase.trigger
     label uppercase
-    input(type="checkbox")#simple.trigger
-    label simple
-    input(type="checkbox")#ipa.trigger
-    label IPA
+    select#alphabet.trigger
+      option(value="standard") standard
+      option(value="simple") simple
+      option(value="ipa") IPA
+      option(value="ascii") ASCII
   #body
     textarea#source.trigger.
       春眠不覺曉
