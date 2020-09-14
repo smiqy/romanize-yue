@@ -1,17 +1,18 @@
 const fs = require("fs")
 
-const pathEmc = "rime-middle-chinese/zyenpheng.dict.yaml"
-const textEmc = fs.readFileSync(pathEmc, "utf8");
-
 const reduceReplace = (s, xys) =>
   xys.reduce((acc, [x, y]) => acc.replace(x, y), s);
 
 const data = {}
 const toStr = {}
 
-const textEmcNew = textEmc
+const pathEmc = "rime-middle-chinese/zyenpheng.dict.yaml"
+const textEmc = fs.readFileSync(pathEmc, "utf8");
+
+data.emc = {};
+textEmc
   .split("\n")
-  .filter((line) => /^\p{sc=Han}\t/gu.test(line))
+  .filter(line => /^\p{sc=Han}\t/gu.test(line))
   .slice(31)
   .join("\n")
   .replace(/[a-z']+/g, (match) => {
@@ -20,11 +21,15 @@ const textEmcNew = textEmc
     if (/x$/.test(syllable)) {
       tone = 1;
       syllable = syllable.slice(0, -1);
-    } else if (/h$/.test(syllable)) {
+    }
+    else if (/h$/.test(syllable)) {
       tone = 2;
       syllable = syllable.slice(0, -1);
-    } else if (/d$/.test(syllable)) tone = 2;
-    else if (/[ktp]$/.test(syllable)) tone = 3;
+    }
+    else if (/d$/.test(syllable))
+      tone = 2;
+    else if (/[ktp]$/.test(syllable))
+      tone = 3;
 
     syllable = [
       [/'/g, "-"],
@@ -34,7 +39,7 @@ const textEmcNew = textEmc
       [/p$/, "m"],
       [/^h/, "x"],
       [/^gh/, "h"],
-      [/h/, "'"],
+      [/(?<!^)h/, "'"],
       [/^z(?!s)/, "ʣ"],
       [/^c/, "ʦ"],
       [/^k/, "c"],
@@ -42,27 +47,29 @@ const textEmcNew = textEmc
 
       [/(?<=ʦ)'j/, "j'"],
       [/(?<=[tʦ])'r/, "r'"],
-    ].reduce((acc, [x, y]) => acc.replace(x, y), syllable);
+    ].reduce((acc, [x, y]) => acc.replace(x, y), syllable.trim());
 
     return (syllable + tone).normalize("NFC");
+  })
+  .split("\n")
+  .map(line => line.trim().split("\t"))
+  .filter(([character]) => character.length == 1)
+  .forEach(([character, entry, percentage]) => {
+    percentage = parseInt(percentage) || null
+    const [syllable, tone] = entry.match(/(.+)(\d)/).slice(1);
+    if (!data.emc[character])
+      data.emc[character] = []
+    const initial = syllable.match(/^[^iyueoa]*/)
+    data.emc[character].push({ syllable, initial, tone, percentage });
   });
 
-data.emc = {};
-textEmcNew
-  .split("\n")
-  .map((line) => line.trim().split("\t"))
-  .filter(([character]) => character.length == 1)
-  .map(([character, entry, percentage]) => {
-    if (!percentage || parseInt(percentage.match(/(\d+)%/)) >= 30) {
-      const row = entry.match(/(.+)(\d)/).slice(1);
-      if (data.emc[character]) data.emc[character].push(row);
-      else data.emc[character] = [row];
-    }
-  });
+for(const character of Object.keys(data.emc))
+  data.emc[character] = data.emc[character].sort((x, y) => (y.percentage || 50) - (x.percentage || 50))
+
 
 toStr.emc = {}
 
-toStr.emc.standard = ([syllable, tone]) =>
+toStr.emc.standard = ({ syllable, tone }) =>
   (
     reduceReplace(syllable, [
       [/nj/, "ɲ"],
@@ -75,22 +82,22 @@ toStr.emc.standard = ([syllable, tone]) =>
       [/tr/, "ʈ"],
       [/(?<=[ʣʦ])j/, "\u0321"],
       [/(?<=[ʣʦ])r/, "\u0322"],
-      [/'/, "\u0315"],
+      // [/'/, "\u0315"],
       [/j/g, "ȷ"],
-      [/i/g, "ı"], ])
-      + ["\u0304", "\u0301", "\u0300", "\u030D"][tone]
+      [/i/g, "ı"],])
+    + ["\u0304", "\u0301", "\u0300", "\u030D"][tone]
   ).normalize("NFC")
 
 pathYue = "jyutping-table/list.tsv";
 textYue = fs.readFileSync(pathYue, "utf8");
 
-const voice = (c) =>
+const voice = c =>
   ({
     g: "c",
     d: "t",
     ʣ: "ʦ",
     b: "p",
-  }[c]);
+  }[c])
 
 data.yue = {};
 textYue
@@ -98,14 +105,13 @@ textYue
   .split("\r\n")
   .slice(1)
   .map((line) => {
-    let [character, unicode, entry, initial, tail, tone] = line.split("\t");
-
-    let syllable = entry.replace(/[1-6]$/, "");
+    let [character, unicode, entry, initial, tail, tone] = line.split("\t")
+    let syllable = entry.replace(/[1-6]$/, "")
 
     if (
-      syllable.split(" ").length == 1 &&
-      (!/[ktp]$/.test(syllable) || ["1", "3", "6"].includes(tone)) &&
-      syllable != "ngm"
+      syllable.split(" ").length == 1
+      && (! /[ktp]$/.test(syllable) || ["1", "3", "6"].includes(tone))
+      && syllable != "ngm"
     ) {
       if (/[ktp]$/.test(syllable)) {
         tone = {
@@ -120,44 +126,45 @@ textYue
           .replace(/p$/, "m");
       }
 
-      syllable = syllable
+      syllable = reduceReplace(syllable, [
         // pre
-        .replace(/^k/, "k'")
-        .replace(/^t/, "t'")
-        .replace(/^c/, "c'")
-        .replace(/^p/, "p'")
+        [/^k/, "k'"],
+        [/^t/, "t'"],
+        [/^c/, "c'"],
+        [/^p/, "p'"],
 
-        .replace(/^g/, "k")
-        .replace(/^d/, "t")
-        .replace(/^z/, "c")
-        .replace(/^b/, "p")
+        [/^g/, "k"],
+        [/^d/, "t"],
+        [/^z/, "c"],
+        [/^b/, "p"],
 
         // main
-        .replace(/ng/g, "ŋ")
-        .replace(/yu/, "y")
-        .replace(/oe|eo/, "ø")
-        .replace(/j(?=[iy])/, "")
-        .replace(/w/, "v")
-        .replace(/v(?=u)/, "")
-        .replace(/a/g, "ə")
-        .replace(/əə/, "a")
-        .replace(/c/, "ʦ")
-        .replace(/z/, "ʣ")
-        .replace(/k/g, "c")
-        .replace(/h/, "x");
+        [/ng/g, "ŋ"],
+        [/yu/, "y"],
+        [/oe|eo/, "ø"],
+        [/j(?=[iy])/, ""],
+        [/w/, "v"],
+        [/v(?=u)/, ""],
+        [/a/g, "ə"],
+        [/əə/, "a"],
+        [/c/, "ʦ"],
+        [/z/, "ʣ"],
+        [/k/g, "c"],
+        [/h/, "x"],
+      ])
 
-      tone = tone;
       if (["1", "2", "3", "7"].includes(tone))
         syllable = syllable.replace(/^(?=[ŋnmljviyueøoəa])/, "q");
       else
-        syllable = syllable
-          .replace(/^s/, "z")
-          .replace(/^x/, "h")
-          .replace(/^f/, "w")
-          .replace(/^p/, "b")
-          .replace(/^c/, "g")
-          .replace(/^t/, "d")
-          .replace(/^ʦ/, "ʣ");
+        syllable = reduceReplace(syllable, [
+          [/^s/, "z"],
+          [/^x/, "h"],
+          [/^f/, "w"],
+          [/^p/, "b"],
+          [/^c/, "g"],
+          [/^t/, "d"],
+          [/^ʦ/, "ʣ"],
+        ])
 
       tone = {
         "1": 0,
@@ -174,30 +181,21 @@ textYue
       const emcs = data.emc[character];
       if (emcs && emcs.length >= 1) {
         for (const nasal of ["ŋ", "n", "m"])
-          if (emcs.some((emc) => new RegExp("^" + nasal).test(emc[0]))) {
-            syllable = syllable.replace(
-              /(?<=^q?)(?=[iyueøoaəjv])/,
-              `${nasal}-`
-            );
-            break;
+          if (emcs.some(emc => new RegExp(`^${nasal}`).test(emc.syllable))) {
+            syllable = syllable.replace(/(?<=^q?)(?=[iyueøoaəjv])/, `${nasal}-`)
+            break
           }
 
-        syllable = syllable
-          .replace(/n-j/, "nj")
-          .replace(/(?<=n)-(?=[iyø])/, "j")
-          .replace(/(?<=ŋ)-(?=[iyj])/, "");
+        syllable = reduceReplace(syllable, [
+          [/n-j/, "nj"],
+          [/(?<=n)-(?=[iyø])/, "j"],
+          [/(?<=ŋ)-(?=[iyøj])/, ""],
+        ])
 
         for (const [x, y, z] of [
           [/^[ʣʦzs]j/, /(?<=^[ʣʦzs])/, "j"],
-          [/^[dtʣʦzs]r/, /(?<=^[ʣʦzs])/, "r"],
+          [/^[ʣʦzsdt]r/, /(?<=^[ʣʦzs])/, "r"],
           [/^nr/, /^n/, "nr"],
-
-          //, [/^px/, /^f/, "pvx"]
-          //, [/^p/, /^f/, "pv"]
-          //, [/^b/, /^f/, "pv"]
-          //, [/^px/, /^w/, "bvx"]
-          //, [/^p/, /^w/, "bv"]
-          //, [/^b/, /^w/, "bv"]
 
           [/^[gchx]/, /^f/, "xv"],
           [/^[gchx]/, /^w/, "hv"],
@@ -205,7 +203,7 @@ textYue
           [/^[gcxh]/, /(?=^[iyueøoəajv])/, "h-"],
           [/^[gcxh]/, /^q(?=[iyueøoəajv])/, "x-"],
         ])
-          if (emcs.every((emc) => x.test(emc[0])) && y.test(syllable)) {
+          if (emcs.every(emc => x.test(emc.syllable)) && y.test(syllable)) {
             syllable = syllable.replace(y, z);
             break;
           }
@@ -219,64 +217,79 @@ textYue
           , [/^g/, /^x/, "g-x"]
           , [/^g/, /^h/, "g-h"]
           ])
-          if(emcs.some(emc => x.test(emc[0])) && y.test(syllable)) {
+          if(emcs.some(emc => x.test(emc.syllable)) && y.test(syllable)) {
             syllable = syllable.replace(y, z);
             break;
           }
         */
 
-        syllable = syllable
-          .replace(/(?<=^h)-(?=[jvy])/, "")
-          .replace(/-(?=u)/, "v")
-          .replace(/(?<=[xh])v(?=u)/, "")
-          .replace(/-(?=[iyø])/, "j")
-          .replace(/(?<=^[xnm])-(?=j)/, "")
-          .replace(/(?<=^ŋ)-(?=[jiyø])/, "")
-          .replace(/(?<=[ŋnm])-(?=v)/, "")
-          .replace(/(?<=ŋ)-(?=[iyueøoəa])/, "");
+        syllable = reduceReplace(syllable, [
+          [/(?<=^h)-(?=[jvy])/, ""],
+          [/-(?=u)/, "v"],
+          [/(?<=[xh])v(?=u)/, ""],
+          [/-(?=[iyø])/, "j"],
+          [/(?<=^[xŋnm])-(?=j)/, ""],
+          [/(?<=^ŋ)-(?=[iyø])/, ""],
+          [/(?<=[ŋnm])-(?=v)/, ""],
+          [/(?<=ŋ)-(?=[iyueøoəa])/, ""],
+        ])
       }
       // } historical conversion
 
+      syllable = syllable.replace(/'([vjr])/, "$1'")
 
-      syllable = syllable
-        .replace(/'([vjr])/, "$1'")
+      let syllableCopy = syllable
+      const initial = /^[ŋm]$/.test(syllable) ? "" : syllable.match(/^[^iyueøoəa]*/)
+      syllableCopy = syllableCopy.replace(new RegExp(`^${initial}`), "")
+      const nucleus = /^[ŋm]$/.test(syllable) ? syllable : syllableCopy.match(/^[iyueøoəa]/)
+      const terminal = syllableCopy.slice(1)
+      const medial = null
 
-      const entry = [syllable, tone]
+      const entry = {
+        syllable,
+        initial,
+        medial,
+        nucleus,
+        terminal,
+        tone,
+        voiced: /^[bwmdznlʣghŋjviyueøoəa]/.test(syllable),
+        short: /ə|ei|ou|ø[in]|[iu]ŋ/.test(syllable),
+      }
 
       if (
-        //(! /[gdʣb]x|q[ŋnml]/.test(syllable)) &&
         ! emcs || [
-          ! /^q?ŋ/.test(syllable) || emcs.some((emc) => /^ŋ/.test(emc[0])),
-          ! /^q?n/.test(syllable) || emcs.some((emc) => /^n/.test(emc[0])),
-          ! /^q?m/.test(syllable) || emcs.some((emc) => /^m/.test(emc[0])),
-          /m$/.test(syllable) == emcs.some(emc => /m$/.test(emc[0])),
-          /n$/.test(syllable) == emcs.some(emc => /n$/.test(emc[0])),
-          /ŋ$/.test(syllable) == emcs.some(emc => /ŋ$/.test(emc[0])),
+          ! /^q?ŋ/.test(syllable) || emcs.some(emc => /^ŋ/.test(emc.syllable)),
+          ! /^q?n/.test(syllable) || emcs.some(emc => /^n/.test(emc.syllable)),
+          ! /^q?m/.test(syllable) || emcs.some(emc => /^m/.test(emc.syllable)),
+          ///m$/.test(syllable) == emcs.some(emc => /m$/.test(emc.syllable)),
+          ///n$/.test(syllable) == emcs.some(emc => /n$/.test(emc.syllable)),
+          ///ŋ$/.test(syllable) == emcs.some(emc => /ŋ$/.test(emc.syllable)),
         ].every(x => x)
       )
         if (data.yue[character]) {
           if (!
-            data.yue[character].some(
-              ([syllableOld, toneOld]) =>
-                [
-                  syllableOld,
-                  syllableOld.replace(/^n/, "l"),
-                  syllableOld.replace(/^l/, "n"),
-                  syllableOld.replace(/^n/, "ql"),
-                  syllableOld.replace(/^l/, "qn"),
-                  syllableOld.replace(/^(?=[ŋnmljviyueøoəa])/, "q"),
-                  syllableOld.replace(/^(?=[ŋnmljviyueøoəa])/, "q"),
-                ].includes(syllable)
-                || tone == toneOld && [
-                  syllable.replace(/q(?=[ŋnml])/, ""),
-                  syllable.replace(/(?<=[gdʣb][rj]?)x/, ""),
-                  syllable.replace(/^./, voice),
-                  syllable.replace(/^q?l/, "n"),
-                  syllable.replace(/^q?l/, "qn"),
-                  syllable.replace(/(?<=^[cg])/, "v"),
-                  syllable.replace(/eŋ/, "iŋ"),
-                  syllable.replace(/oŋ/, "uŋ"),
-                ].includes(syllableOld)
+            data.yue[character].some(old =>
+              [
+                ["", ""],
+                [/^n/, "l"],
+                [/^l/, "n"],
+                [/^n/, "ql"],
+                [/^l/, "qn"],
+                [/^(?=[ŋnmljviyueøoəa])/, "q"],
+                [/^(?=[ŋnmljviyueøoəa])/, "q"],
+              ].map(([x, y]) => old.syllable.replace(x, y)).includes(syllable)
+              || tone == old.tone && [
+                [/(?=[ŋnml])/, "q"],
+                [/(?<=g|d|ʣ[rj]?|b)x/, ""],
+                [/^q?n/, "l"],
+                [/^qn/, "l"],
+                [/^n/, "ql"],
+                [/(?<=^[cg])v/, ""],
+                [/iŋ$/, "eŋ"],
+                [/uŋ$/, "oŋ"],
+                [/^[ʣʦ]([rj]?)'?/, "s$1"],
+                [/^[ʣʦ]([rj]?)'?/, "z$1"],
+              ].map(([x, y]) => old.syllable.replace(x, y)).includes(syllable)
             )
           )
             data.yue[character].push(entry);
@@ -286,7 +299,7 @@ textYue
 
 toStr.yue = {}
 
-toStr.yue.standard = ([syllable, tone]) =>
+toStr.yue.standard = ({ syllable, tone }) =>
   (
     reduceReplace(syllable, [
       [/nj/, "ɲ"],
@@ -297,22 +310,38 @@ toStr.yue.standard = ([syllable, tone]) =>
       [/zr/, "ʐ"],
       [/sr/, "ʂ"],
       [/(?<=[ʣʦ])r/, "\u0322"],
-      [/'/, "\u0315"],
       [/j/, "ȷ"],
       [/i/, "ı"],
     ])
-  + ["\u0300", "\u0301", "\u0304", "\u030D"][tone]
-  )
-  .normalize("NFC")
+    + ["\u0300", "\u0301", "\u0304", "\u030D"][tone]
+  ).normalize("NFC")
 
-toStr.yue.simple = ([syllable, tone]) => {
-  if(true)
-    if(/^[bwmdznlʣghŋjviyueøoəa]/.test(syllable))
-      tone = ["\u0316", "\u0317", "\u0331", "\u0329"][tone]
-  else
-    tone = (/^[bwmdznlʣghŋjviyueøoəa]/.test(syllable)
-      ? ["\u0300", "\u030C", "\u1DC5", "\u030F"]
-      : ["\u0302", "\u0301", "\u0304", "\u030B"])[tone];
+toStr.yue.verbose = ({ initial, nucleus, terminal, tone, voiced, short }) => {
+  if(short)
+    //terminal += terminal
+    nucleus += "\u0306" //"\u032F"
+  tone = (voiced
+    ? ["\u0316", "\u0317", "\u0331", "\u0329"]
+    : ["\u0300", "\u0301", "\u0304", "\u030D"])[tone]
+
+    return reduceReplace(initial + nucleus + terminal + tone, [
+        [/nj/, "ɲ"],
+        [/zj/, "ᶎ"],
+        [/sj/, "ᶊ"],
+        [/(?<=[ʣʦ])j/, "\u0321"],
+        [/nr/, "ɳ"],
+        [/zr/, "ʐ"],
+        [/sr/, "ʂ"],
+        [/(?<=[ʣʦ])r/, "\u0322"],
+        [/j/, "ȷ"],
+        [/i/, "ı"],
+    ]).normalize("NFC")
+}
+
+toStr.yue.simple = ({ syllable, tone, voiced }) => {
+  tone = (voiced
+    ? ["\u0300", "\u030C", "\u1DC5", "\u030F"]
+    : ["\u0302", "\u0301", "\u0304", "\u030B"])[tone]
 
   syllable = reduceReplace(syllable, [
     [/g/g, "c"],
@@ -325,21 +354,22 @@ toStr.yue.simple = ([syllable, tone]) => {
     [/q/g, ""],
 
     [/c(?!')/g, "g"],
+    [/cv(?!')/g, "gv"],
     [/t(?!')/g, "d"],
     [/ʦ(?![jr]?')/g, "ʣ"],
     [/p(?!')/g, "b"],
 
-    [/(?<=(c|t|ʦ[jr]?|p))'/g, ""],
+    [/(?<=(cv?|t|ʦ[jr]?|p))'/g, ""],
 
     [/ʣ/g, "z"],
     [/c/g, "k"],
     [/ʦ/g, "c"],
 
-    [/[zcs]z[jr]/g, "\u0321"],
-
+    [/nr/, "n"],
     [/nj/, "ɲ"],
-    [/(?<=[ʣʦzsn])j/, "\u0321"],
-    [/(?<=[ʣʦzs])r/, "\u0322"],
+    [/c[jr]/, "ꞔ"],
+    [/z[jr]/, "ᶎ"],
+    [/s[jr]/, "ᶊ"],
     [/i/g, "ı"],
     [/j/g, "ȷ"],
   ])
@@ -347,7 +377,7 @@ toStr.yue.simple = ([syllable, tone]) => {
   return (syllable + tone).normalize("NFC");
 };
 
-toStr.yue.ascii = ([syllable, tone]) =>
+toStr.yue.ascii = ({ syllable, tone }) =>
   reduceReplace(syllable, [
     [/ŋ/g, "k"],
     [/ʣ/g, "dz"],
@@ -356,51 +386,48 @@ toStr.yue.ascii = ([syllable, tone]) =>
     [/ə/g, "^"],
   ]) + ["\\", "/", "-", "|"][tone]
 
-toStr.yue.ipa = ([syllable, tone]) => {
-  voiced = /^[bwmdznlʣghŋjviyueøoəa]/.test(syllable);
+toStr.yue.ipa = ({ syllable, tone, voiced, short }) => {
+  syllable = reduceReplace(syllable, [
+    [/i/, "iː"],
+    [/oi$/, "ɔːy"],
+    [/ui$/, "uːy"],
+    [/o(?!u$)/, "ɔː"],
+    [/e(?!i$)/, "ɛː"],
+    [/y/, "yː"],
+    [/øi$/, "ɵy"],
+    [/ø(?=n$)/, "ɵ"],
+    [/ø/, "œː"],
 
-  syllable = syllable
-    .replace(/i/, "iː")
-    .replace(/oi$/, "ɔːy")
-    .replace(/ui$/, "uːy")
-    .replace(/o(?!u$)/, "ɔː")
-    .replace(/e(?!i$)/, "ɛː")
-    .replace(/y/, "yː")
-    .replace(/øi$/, "ɵy")
-    .replace(/ø(?=n$)/, "ɵ")
-    .replace(/ø/, "œː")
+    [/^q/, ""],
 
-    .replace(/^q/, "")
+    [/^[gc]/, "k"],
+    [/^[hx]/, "h"],
+    [/'/, "ʰ"],
 
-    .replace(/^[gc]/, "k")
-    .replace(/^[hx]/, "h")
-    .replace(/'/, "ʰ")
+    [/^[dt]/, "t"],
 
-    .replace(/^[dt]/, "t")
+    [/^[ʣʦ]r/, "ʈʂ"],
+    [/^[zs]r/, "ʂ"],
 
-    .replace(/^[ʣʦ]r/, "ʈʂ")
-    .replace(/^[zs]r/, "ʂ")
+    [/^[ʣʦ]j/, "tɕ"],
+    [/^[zs]j/, "ɕ"],
+    [/^nj/, "ɲ"],
 
-    .replace(/^[ʣʦ]j/, "tɕ")
-    .replace(/^[zs]j/, "ɕ")
-    .replace(/^nj/, "ɲ")
+    [/^[ʣʦ]/, "ts"],
 
-    .replace(/^[ʣʦ]/, "ts")
+    [/^[wf]/, "f"],
+    [/^v/, "W"],
+    [/v/, "ʷ"],
 
-    .replace(/^[wf]/, "f")
-    .replace(/^v/, "W")
-    .replace(/v/, "ʷ")
-
-    .replace(/^m$/, "m̩")
-    .replace(/^ŋ$/, "ŋ̍");
+    [/^m$/, "m̩"],
+    [/^ŋ$/, "ŋ̍"],
+  ])
 
   if (tone == 3)
     syllable = syllable
       .replace(/(?<!^)ŋ$/, "k̚")
       .replace(/(?<!^)n$/, "t̚")
       .replace(/(?<!^)m$/, "p̚");
-
-  const short = !/ː/.test(syllable);
 
   tone = (voiced
     ? ["˧˩", "˩˧", "˩", "˩"]
@@ -467,68 +494,82 @@ for (const [k, v] of Object.entries(pinyin)) {
 
       const emcs = data.emc[c];
       if (emcs && emcs.length >= 1) {
-        if (emcs.some((emc) => /^m/.test(emc[0])))
+        if (emcs.some(emc => /^m/.test(emc.syllable)))
           syllable = syllable.replace(/^(?=u)/, "m");
-        else if (emcs.some((emc) => /^ŋ/.test(emc[0])))
+        else if (emcs.some(emc => /^ŋ/.test(emc.syllable)))
           syllable = syllable.replace(/^(?=[iyuea])/, "ŋ");
-        else if (emcs.some((emc) => /^nr/.test(emc[0])))
+        else if (emcs.some(emc => /^nr/.test(emc.syllable)))
           syllable = syllable.replace(/^r/, "nr").replace(/^er$/, "enr");
-        else if (emcs.some((emc) => /^n[ij]/.test(emc[0])))
+        else if (emcs.some(emc => /^n[ij]/.test(emc.syllable)))
           syllable = syllable.replace(/^r/, "nj").replace(/^er$/, "enj");
-        else if (emcs.some((emc) => /^[ij]/.test(emc[0])))
+        else if (emcs.some(emc => /^[ij]/.test(emc.syllable)))
           syllable = syllable.replace(/^r/, "j").replace(/^er$/, "ej");
 
-        if (emcs.some((emc) => /^[ʣʦsz]r/.test(emc[0])))
+        if (emcs.some(emc => /^[ʣʦsz]r/.test(emc.syllable)))
           syllable = syllable
             .replace(/^g(?=[iy])/, "ʣr")
             .replace(/^c(?=[iy])/, "ʦr")
             .replace(/^x(?=[iy])/, "sr");
-        else if (emcs.some((emc) => /^[ʣʦsz]j/.test(emc[0])))
+        else if (emcs.some(emc => /^[ʣʦsz]j/.test(emc.syllable)))
           syllable = syllable
             .replace(/^g(?=[iy])/, "ʣj")
             .replace(/^c(?=[iy])/, "ʦj")
             .replace(/^x(?=[iy])/, "sj")
             .replace(/(?<=^[ʣʦs])r/, "j");
-        else if (emcs.some((emc) => /^[ʣʦsz]/.test(emc[0])))
+        else if (emcs.some(emc => /^[ʣʦsz]/.test(emc.syllable)))
           syllable = syllable
             .replace(/^g(?=[iy])/, "ʣ")
             .replace(/^c(?=[iy])/, "ʦ")
             .replace(/^x(?=[iy])/, "s");
 
         for (const emc of emcs) {
-          if (/[ŋnm]$/.test(emc[0]) && emc[1] == 3) {
+          if (/[ŋnm]$/.test(emc.syllable) && emc.tone == 3) {
             syllable += {
               ŋ: "c",
               n: "t",
               m: "p",
-            }[emc[0].slice(-1)];
+            }[emc.syllable.slice(-1)];
             break;
           }
         }
       }
 
-      return [syllable, tone];
+      try {
+        let [initial, medial, nucleus, terminal] =
+          /^en?[jr][ctp]?$/.test(syllable)
+            ? ["", "", syllable.replace(/[ctp]$/, ""), syllable.match(/[ctp]?$/)]
+            : syllable.match(/^([^iyuea]*)([iyu]?)([iyuea]?)([iuŋnm]?[ctp]?)$/).slice(1)
+
+        if (medial && !nucleus) {
+          [medial, nucleus] = [nucleus, medial]
+        }
+        return { syllable, initial, medial, nucleus, terminal, tone };
+      } catch {
+        console.log([c, syllable])
+        return null
+      }
     });
 
-    data.cmn[c] = data.cmn[c].concat(addition);
+    data.cmn[c] = data.cmn[c].concat(addition.filter(x => x));
   }
 }
 
 toStr.cmn = {}
 
-toStr.cmn.standard = ([syllable, tone]) =>
+toStr.cmn.standard = ({ syllable, tone }) =>
   (
-    syllable
-    .replace(/nj/g, "ɲ")
-    .replace(/nr/g, "ɳ")
-    .replace(/(?<=[ʣʦs])j/g, "\u0321")
-    .replace(/(?<=[ʣʦs])r/g, "\u0322")
-    .replace(/i/g, "ı")
-    .replace(/j/g, "ȷ")
+    reduceReplace(syllable, [
+      [/nj/g, "ɲ"],
+      [/nr/g, "ɳ"],
+      [/(?<=[ʣʦs])j/g, "\u0321"],
+      [/(?<=[ʣʦs])r/g, "\u0322"],
+      [/i/g, "ı"],
+      [/j/g, "ȷ"],
+    ])
     + ["\u0301", "\u030C", "\u0300", "\u0302", "\u0307"][tone]
   ).normalize("NFC")
 
-toStr.cmn.simple = ([syllable, tone]) =>
+toStr.cmn.simple = ({ syllable, tone }) =>
   (
     syllable
       .replace(/e(?=[ŋnm])/, "")
@@ -545,29 +586,30 @@ toStr.cmn.simple = ([syllable, tone]) =>
       .replace(/i/g, "ı")
       .replace(/j/g, "ȷ")
     + ["\u0301", "\u030C", "\u0300", "\u0302", "\u0307"][tone]
-    ).normalize("NFC");
+  ).normalize("NFC");
 
 const pathTsv = "tsv"
 const pathRom = "../docs/romanization"
-for(const path of [pathTsv, pathRom, pathRom.replace("/docs/", "/plugin/")])
-  if (! fs.existsSync(path))
+for (const path of [pathTsv, pathRom, pathRom.replace("/docs/", "/plugin/")])
+  if (!fs.existsSync(path))
     fs.mkdirSync(path)
 
-for(const lang of Object.keys(toStr)) {
+for (const lang of Object.keys(toStr)) {
   fs.writeFileSync(
     `${pathTsv}/${lang}.tsv`,
-    Object.keys(data[lang])
-    .map(character =>
-      data[lang][character]
-      .map(([syllable, tone]) =>
-        `${character}\t${syllable}\t${tone}\n`
+    "character\tsyllable\tinitial\tmedial\tnuclues\tterminal\ttone\tpercentage\n"
+    + Object.keys(data[lang])
+      .map(character =>
+        data[lang][character]
+          .map(e =>
+            `${character}\t${e.syllable}\t${e.initial}\t${e.medial}\t${e.nucleus}\t${e.terminal}\t${e.tone}\t${e.percentage}\n`
+          )
+          .join("")
       )
       .join("")
-    )
-    .join("")
   );
 
-  for(const key of Object.keys(toStr[lang])) {
+  for (const key of Object.keys(toStr[lang])) {
     const path = `${pathRom}/${lang}-${key}.js`
 
     fs.writeFileSync(
@@ -585,7 +627,7 @@ for(const lang of Object.keys(toStr)) {
     fs.copyFile(
       path,
       path.replace("/docs/", "/plugin/"),
-      (err) => {
+      err => {
         if (err) console.log(err);
       }
     );

@@ -9,7 +9,7 @@ html body {
   margin: 0;
   height: 100%;
   font-size: 14pt;
-  font-family: "Helvetica Neue", "Noto Sans CJK", "Noto Sans", sans-serif;
+  font-family: "Noto Sans Mono", mono;
   font-weight: lighter;
   color: white;
   background-color: black;
@@ -30,6 +30,9 @@ html body #body {
   html body #body {
     display: flex;
   }
+}
+html body #body #source {
+  white-space: pre;
 }
 html body #body #source, html body #body .sink {
   border: 1px solid;

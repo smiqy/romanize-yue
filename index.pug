@@ -7,9 +7,10 @@ head
   //
     for lang in ["emc", "yue", "cmn"]
       for key in ["standard", "simple", "ascii", "ipa"]
-        script(src=`romanization-${lang}-${key}.js`)
+        script(src=`romanization/${lang}-${key}.js`)
   script(src="romanization/emc-standard.js")
   script(src="romanization/yue-standard.js")
+  script(src="romanization/yue-verbose.js")
   script(src="romanization/yue-simple.js")
   script(src="romanization/yue-ipa.js")
   script(src="romanization/yue-ascii.js")
@@ -27,26 +28,27 @@ body
     label uppercase
     select#alphabet.trigger
       option(value="standard") standard
+      option(value="verbose") verbose
       option(value="simple") simple
       option(value="ipa") IPA
       option(value="ascii") ASCII
   #body
-    textarea#source.trigger.
-      春眠不覺曉
-      處處聞啼鳥
-      夜來風雨聲
-      花落知多少
-
-      幫滂竝明
-      非敷奉微
-      端透定泥
-      知徹澄娘
-      精清從＿心邪
-      莊初崇＿生俟
-      章昌常日書船
-      見溪群疑
-      影＿＿云曉匣
-      ＿＿＿來
+    textarea#source.trigger
+      | 春眠不覺曉
+      | 處處聞啼鳥
+      | 夜來風雨聲
+      | 花落知多少
+      |
+      | 幫 滂 竝 明
+      | 非 敷 奉 微
+      | 端 透 定 泥
+      |         來
+      | 知 徹 澄 娘
+      | 精 清 從    心 邪
+      | 莊 初 崇    生 俟
+      | 章 昌 常 日 書 船
+      | 見 溪 群 疑
+      | 影       云 曉 匣
     #emc.sink
     #yue.sink
     #cmn.sink

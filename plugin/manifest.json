@@ -5,7 +5,7 @@
     "version": "1.0",
     "browser_action": {},
     "background": {
-        "scripts": ["jquery.min.js", "romanization/yue-standard.js", "romanization/cmn-standard.js", "romanization/cmn-simple.js", "background.js"]
+        "scripts": ["jquery.min.js", "romanization/yue-standard.js", "romanization/yue-verbose.js", "romanization/cmn-standard.js", "romanization/cmn-simple.js", "background.js"]
     },
     "content_scripts": [{
         "matches": ["<all_urls>"],

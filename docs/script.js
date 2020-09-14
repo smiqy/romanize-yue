@@ -81,6 +81,7 @@ const convertSym = s =>
 const maps = {
   emcStandard: mapEmcStandard,
   yueStandard: mapYueStandard,
+  yueVerbose: mapYueVerbose,
   yueSimple: mapYueSimple,
   yueAscii: mapYueAscii,
   yueIpa: mapYueIpa,
@@ -94,12 +95,12 @@ const tones = {
   cmn: "\u0301\u030C\u0300\u0302\u0307",
 };
 
-const convert = (lang, s, alphabetTp) =>
+const convert = (lang, s, alphabetType) =>
   s.replace(/\p{sc=Han}/gu, character => {
     let phonetics = null
-    for(const key of ["simple", "ipa", "ascii", "standard"]) {
+    for(const key of ["simple", "ipa", "ascii", "verbose", "standard"]) {
       const suffix = capitalize(key)
-      if(alphabetTp == key && maps[lang + suffix]) {
+      if(alphabetType == key && maps[lang + suffix]) {
         phonetics = maps[lang + suffix][character]
         break
       }
@@ -110,7 +111,8 @@ const convert = (lang, s, alphabetTp) =>
     if (!phonetics) {
       return character;
     } else {
-      if (cyrillic.checked)
+      if (cyrillic.checked) {
+        const simple = alphabetType === "simple" && lang != "emc"
         phonetics = phonetics.map((phonetic) =>
           phonetic
           .normalize("NFD")
@@ -118,7 +120,15 @@ const convert = (lang, s, alphabetTp) =>
           .replace(/ȷ/g, "j")
 
           .replace(/ɲ/g, "nj")
+          .replace(/ᶎ/g, "zj")
+          .replace(/ᶊ/g, "sj")
           .replace(/ɳ/g, "nr")
+          .replace(/ʐ/g, "zr")
+          .replace(/ʂ/g, "sr")
+          .replace(/ɖ/g, "dr")
+          .replace(/ʈ/g, "tr")
+          .replace(/\u0321/g, "j")
+          .replace(/\u0322/g, "r")
 
           .replace(/i/g, "и")
           .replace(/y/g, "ѵ")
@@ -141,7 +151,7 @@ const convert = (lang, s, alphabetTp) =>
           .replace(/d/g, "д")
           .replace(/t/g, "т")
           .replace(/s/g, "с")
-          .replace(/z/g, lang === "cmn" && alphabetTp === "simple" ? "ѕ" : "з")
+          .replace(/z/g, simple ? "ѕ" : "з")
           .replace(/n/g, "н")
           .replace(/l/g, "л")
           .replace(/r/g, "р")
@@ -149,17 +159,8 @@ const convert = (lang, s, alphabetTp) =>
           .replace(/ʦ/g, "ц")
           .replace(/ʣ/g, "ѕ")
 
-          .replace(/ʤ/g, "җ")
-          .replace(/ʧ/g, "щ")
-          .replace(/ʒ/g, "ж")
-          .replace(/ʃ/g, "ш")
-
-          .replace(/s\u0323/g, "ш")
-          .replace(/z\u0323/g, "җ")
-          .replace(/c\u0323/g, "щ")
-
           .replace(/g/g, "г")
-          .replace(/c/g, lang === "cmn" && alphabetTp == "simple" ? "ц" : "к")
+          .replace(/c/g, simple ? "ц" : "к")
           .replace(/k/g, "к")
           .replace(/x/g, "х")
           .replace(/h/g, "ғ")
@@ -168,6 +169,7 @@ const convert = (lang, s, alphabetTp) =>
 
           .replace(/q/g, "ҁ")
         );
+      }
 
       if (uppercase.checked)
         phonetics = phonetics.map((phonetic) =>
