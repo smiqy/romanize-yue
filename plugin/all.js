@@ -5,11 +5,9 @@ $(getTextNodesIn(document)).each((index, el) => {
   let chars = [];
   let frag = document.createDocumentFragment();
 
-  const charmap = mapYueVerbose
-
   // Walk through the text in this node one character at a time.
   for (const c of text) {
-    let phonetics = charmap[c];
+    let phonetics = yue[c];
     if (phonetics) {
       if (chars.length > 0) {
         frag.appendChild(document.createTextNode(chars.join('')));
@@ -20,17 +18,8 @@ $(getTextNodesIn(document)).each((index, el) => {
       ruby.appendChild(document.createTextNode(c));
       ruby.setAttribute("class", "romanize-yue");
       const rt = document.createElement("rt");
-
-      const selectsOne = true;
-      if (selectsOne)
-        rt.innerHTML = phonetics[0];
-      else {
-        const div = document.createElement("div");
-        div.innerHTML = phonetics.reverse().join("<br/>");
-        rt.appendChild(div);
-      }
-
-      rt.setAttribute("style", "font-size: 100%; font-family: 'Noto Serif';")
+      rt.innerHTML = show.yue.standard(phonetics[0]);
+      rt.setAttribute("style", "font-size: 100%;")
       ruby.appendChild(rt);
       frag.appendChild(ruby);
     } else

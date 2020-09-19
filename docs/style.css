@@ -1,136 +1,99 @@
 * {
-  box-sizing: border-box;
-}
+  box-sizing: border-box; }
 
 html {
-  height: 100%;
-}
-html body {
-  margin: 0;
-  height: 100%;
-  font-size: 14pt;
-  font-family: "Noto Sans Mono", mono;
-  font-weight: lighter;
-  color: white;
-  background-color: black;
-}
-html body #head {
-  height: 5%;
-  width: 100%;
-  text-align: center;
-  vertical-align: bottom;
-}
-html body #body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 90%;
-}
-@media screen and (orientation: landscape) {
-  html body #body {
-    display: flex;
-  }
-}
-html body #body #source {
-  white-space: pre;
-}
-html body #body #source, html body #body .sink {
-  border: 1px solid;
-  color: inherit;
-  background-color: transparent;
-  font-family: inherit;
-  font-size: inherit;
-}
-@media screen and (orientation: landscape) {
-  html body #body #source, html body #body .sink {
-    height: 100%;
-    width: calc(100%/4);
-    display: inline-block;
-  }
-  html body #body #source:not(:first-child), html body #body .sink:not(:first-child) {
-    border-left: 0;
-  }
-}
-@media screen and (orientation: portrait) {
-  html body #body #source, html body #body .sink {
-    height: calc(100%/4);
-    width: 100%;
-  }
-  html body #body #source:not(:first-child), html body #body .sink:not(:first-child) {
-    border-top: 0;
+  height: 100%; }
+  html body {
     margin: 0;
-    padding: 4px;
-  }
-}
-html body #body #source:focus, html body #body .sink:focus {
-  outline: none;
-}
-html body #body .sink {
-  white-space: pre-wrap;
-  overflow: auto;
-}
-html body #body .sink .multiple {
-  display: inline-block;
-  margin-left: 2px;
-  margin-right: 2px;
-  margin-bottom: 8px;
-  vertical-align: top;
-  border-top: 1px solid;
-  border-left: 1px solid;
-  padding-top: 4px;
-  padding-left: 4px;
-}
-html body #body .sink .multiple .option, html body #body .sink .multiple .option:active {
-  font: inherit;
-  color: white;
-  border: 0;
-  border-top: 1px solid;
-  border-left: 1px solid;
-  padding: 2;
-  width: 100%;
-  margin: 0;
-  margin-top: 4px;
-  background-color: transparent;
-}
-html body #body .sink .multiple .option:first-of-type, html body #body .sink .multiple .option:active:first-of-type {
-  margin-top: 0;
-}
-html body #body .sink .yue-phonetic-0 {
-  background: linear-gradient(to right, #FFF4, transparent);
-}
-html body #body .sink .yue-phonetic-1 {
-  background: linear-gradient(to right, transparent, #FFF4);
-}
-html body #body .sink .yue-phonetic-3 {
-  background: linear-gradient(to right, #FFF4, #FFF4);
-}
-html body #body .sink .cmn-phonetic-0 {
-  background: linear-gradient(to right, #FFF4, #FFF4);
-}
-html body #body .sink .cmn-phonetic-1 {
-  background: linear-gradient(to right, transparent, #FFF4);
-}
-html body #body .sink .cmn-phonetic-3 {
-  background: linear-gradient(to right, #FFF4, transparent);
-}
-html body #body .sink .cmn-phonetic-4 {
-  background: repeating-linear-gradient(to right, transparent, #FFF4, transparent 4px);
-}
-html #foot {
-  height: 5%;
-  width: 100%;
-  text-align: center;
-}
-html #foot a {
-  color: inherit;
-}
-
-select, option {
-  color: inherit;
-  background-color: inherit;
-  font: inherit;
-}
-
-option {
-  background-color: black;
-}
+    height: 100%;
+    font-family: "Noto Sans";
+    font-size: 14pt;
+    font-weight: 300;
+    color: white;
+    background-color: black; }
+    html body #head {
+      height: 5%;
+      width: 100%;
+      text-align: center;
+      vertical-align: bottom; }
+      html body #head select, html body #head option {
+        color: inherit;
+        background-color: inherit;
+        font: inherit; }
+      html body #head option {
+        background-color: black; }
+    html body #body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 90%; }
+      @media screen and (orientation: landscape) {
+        html body #body {
+          display: flex; } }
+      html body #body #source {
+        white-space: pre; }
+      html body #body #source, html body #body .sink {
+        border: 1px solid;
+        color: inherit;
+        background-color: transparent;
+        font-family: inherit;
+        font-size: inherit;
+        padding: 4px; }
+        @media screen and (orientation: landscape) {
+          html body #body #source, html body #body .sink {
+            height: 100%;
+            width: calc(100% / 4);
+            display: inline-block; }
+            html body #body #source:not(:first-child), html body #body .sink:not(:first-child) {
+              border-left: 0; } }
+        @media screen and (orientation: portrait) {
+          html body #body #source, html body #body .sink {
+            height: calc(100% / 4);
+            width: 100%; }
+            html body #body #source:not(:first-child), html body #body .sink:not(:first-child) {
+              border-top: 0;
+              margin: 0;
+              padding: 4px; } }
+        html body #body #source:focus, html body #body .sink:focus {
+          outline: none; }
+      html body #body .sink {
+        white-space: pre-wrap;
+        overflow: auto; }
+        html body #body .sink span, html body #body .sink .multiple {
+          display: inline-block;
+          margin-bottom: 8px; }
+        html body #body .sink .multiple {
+          display: inline-block;
+          vertical-align: top;
+          border-left: 1px solid; }
+          html body #body .sink .multiple .option, html body #body .sink .multiple .option:active {
+            font: inherit;
+            color: white;
+            border: 0;
+            width: 100%;
+            margin: 0;
+            background-color: transparent; }
+        html body #body .sink .syllable.voiced.tone-0 {
+          border-bottom: 1px solid #00F; }
+        html body #body .sink .syllable.voiced.tone-1 {
+          border-bottom: 1px solid #F00; }
+        html body #body .sink .syllable.voiced.tone-2 {
+          border-bottom: 1px solid #0F0; }
+        html body #body .sink .syllable.voiced.tone-3 {
+          border-bottom: 1px solid #FF0; }
+        html body #body .sink .syllable:not(.voiced) {
+          border-bottom: 0; }
+          html body #body .sink .syllable:not(.voiced).tone-0 {
+            border-top: 1px solid #00F; }
+          html body #body .sink .syllable:not(.voiced).tone-1 {
+            border-top: 1px solid #F00; }
+          html body #body .sink .syllable:not(.voiced).tone-2 {
+            border-top: 1px solid #0F0; }
+          html body #body .sink .syllable:not(.voiced).tone-3 {
+            border-top: 1px solid #FF0; }
+  html #foot {
+    height: 5%;
+    width: 100%;
+    text-align: center; }
+    html #foot a {
+      color: inherit; }

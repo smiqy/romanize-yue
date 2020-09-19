@@ -1,0 +1,114 @@
+*
+  box-sizing: border-box
+
+html
+  height: 100%
+
+  body
+    margin: 0
+    height: 100%
+
+    font-family: "Noto Sans"
+    font-size: 14pt
+    font-weight: 300
+    color: white
+    background-color: black
+
+    #head
+      height: 5%
+      width: 100%
+      text-align: center
+      vertical-align: bottom
+
+      select, option
+        color: inherit
+        background-color: inherit
+        font: inherit
+      option
+        background-color: black
+
+    #body
+      margin: 0
+      padding: 0
+      width: 100%
+      height: 90%
+      @media screen and (orientation:landscape)
+        display: flex
+
+      #source
+        white-space: pre
+
+      #source, .sink
+        border: 1px solid
+        color: inherit
+        background-color: transparent
+        font-family: inherit
+        font-size: inherit
+        padding: 4px
+
+        @media screen and (orientation:landscape)
+          height: 100%
+          width: calc(100% / 4)
+          display: inline-block
+          &:not(:first-child)
+            border-left: 0
+        @media screen and (orientation:portrait)
+          height: calc(100% / 4)
+          width: 100%
+          &:not(:first-child)
+            border-top: 0
+            margin: 0
+            padding: 4px
+
+        &:focus
+          outline: none
+
+      .sink
+        white-space: pre-wrap
+        overflow: auto
+
+        span, .multiple
+          display: inline-block
+          margin-bottom: 8px
+
+        .multiple
+          display: inline-block
+          vertical-align: top
+          border-left: 1px solid
+
+          .option, .option:active
+            font: inherit
+            color: white
+            border: 0
+            width: 100%
+            margin: 0
+            background-color: transparent
+
+        .syllable
+          &.voiced
+            &.tone-0
+              border-bottom: 1px solid #00F
+            &.tone-1
+              border-bottom: 1px solid #F00
+            &.tone-2
+              border-bottom: 1px solid #0F0
+            &.tone-3
+              border-bottom: 1px solid #FF0
+          &:not(.voiced)
+            border-bottom: 0
+            &.tone-0
+              border-top: 1px solid #00F
+            &.tone-1
+              border-top: 1px solid #F00
+            &.tone-2
+              border-top: 1px solid #0F0
+            &.tone-3
+              border-top: 1px solid #FF0
+
+  #foot
+    height: 5%
+    width: 100%
+    text-align: center
+
+    a
+      color: inherit

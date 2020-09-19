@@ -1,0 +1,45 @@
+- const title = "romanize-yue"
+- const langs = ["emc", "yue", "cmn"]
+
+html
+  head
+    title= title
+    link(rel="stylesheet", href="style.css")
+
+    for lang in langs
+        script(src=`data/${lang}.js`)
+    script(src="show.js")
+    script(src="script.js")
+
+  body
+    #head
+      input(type="checkbox")#single.trigger
+      label single
+      input(type="checkbox")#cyrillic.trigger
+      label cyrillic
+      input(type="checkbox")#uppercase.trigger
+      label uppercase
+      select#alphabet.trigger
+        for value in ["standard", "verbose", "simple", "IPA", "ASCII"]
+          option(value=value.toLowerCase())= value
+    #body
+      textarea#source.trigger
+        | 春眠不覺曉
+        | 處處聞啼鳥
+        | 夜來風雨聲
+        | 花落知多少
+        |
+        | 幫 滂 竝 明
+        | 非 敷 奉 微
+        | 端 透 定 泥
+        |         來
+        | 知 徹 澄 娘
+        | 精 清 從    心 邪
+        | 莊 初 崇    生 俟
+        | 章 昌 常 日 書 船
+        | 見 溪 群 疑
+        | 影       曉 曉 匣
+      for lang in langs
+        div(id=lang).sink
+    #foot
+      a tweet

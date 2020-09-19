@@ -1,40 +1,32 @@
 
-<head>
-  <title>romanize-yue</title>
-  <link rel="stylesheet" href="style.min.css"/>
-  <!--
-  for lang in ["emc", "yue", "cmn"]
-    for key in ["standard", "simple", "ascii", "ipa"]
-      script(src=`romanization/${lang}-${key}.js`)
-  -->
-  <script src="romanization/emc-standard.js"></script>
-  <script src="romanization/yue-standard.js"></script>
-  <script src="romanization/yue-verbose.js"></script>
-  <script src="romanization/yue-simple.js"></script>
-  <script src="romanization/yue-ipa.js"></script>
-  <script src="romanization/yue-ascii.js"></script>
-  <script src="romanization/cmn-standard.js"></script>
-  <script src="romanization/cmn-simple.js"></script>
-  <script src="script.js"></script>
-</head>
-<body>
-  <div id="head">
-    <input class="trigger" type="checkbox" id="single"/>
-    <label>single</label>
-    <input class="trigger" type="checkbox" id="cyrillic"/>
-    <label>cyrillic</label>
-    <input class="trigger" type="checkbox" id="uppercase"/>
-    <label>uppercase</label>
-    <select class="trigger" id="alphabet">
-      <option value="standard">standard</option>
-      <option value="verbose">verbose</option>
-      <option value="simple">simple</option>
-      <option value="ipa">IPA</option>
-      <option value="ascii">ASCII</option>
-    </select>
-  </div>
-  <div id="body">
-    <textarea class="trigger" id="source">春眠不覺曉
+<html>
+  <head>
+    <title>romanize-yue</title>
+    <link rel="stylesheet" href="style.css"/>
+    <script src="data/emc.js"></script>
+    <script src="data/yue.js"></script>
+    <script src="data/cmn.js"></script>
+    <script src="show.js"></script>
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <div id="head">
+      <input class="trigger" type="checkbox" id="single"/>
+      <label>single</label>
+      <input class="trigger" type="checkbox" id="cyrillic"/>
+      <label>cyrillic</label>
+      <input class="trigger" type="checkbox" id="uppercase"/>
+      <label>uppercase</label>
+      <select class="trigger" id="alphabet">
+        <option value="standard">standard</option>
+        <option value="verbose">verbose</option>
+        <option value="simple">simple</option>
+        <option value="ipa">IPA</option>
+        <option value="ascii">ASCII</option>
+      </select>
+    </div>
+    <div id="body">
+      <textarea class="trigger" id="source">春眠不覺曉
 處處聞啼鳥
 夜來風雨聲
 花落知多少
@@ -48,10 +40,11 @@
 莊 初 崇    生 俟
 章 昌 常 日 書 船
 見 溪 群 疑
-影       云 曉 匣</textarea>
-    <div class="sink" id="emc"></div>
-    <div class="sink" id="yue"></div>
-    <div class="sink" id="cmn"></div>
-  </div>
-  <div id="foot"><a>tweet</a></div>
-</body>
+影       曉 曉 匣</textarea>
+      <div class="sink" id="emc"></div>
+      <div class="sink" id="yue"></div>
+      <div class="sink" id="cmn"></div>
+    </div>
+    <div id="foot"><a>tweet</a></div>
+  </body>
+</html>
