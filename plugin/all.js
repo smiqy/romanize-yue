@@ -1,36 +1,37 @@
-// Get all the text nodes in the document, and replace any Chinese characters found with Jyutping.
 $(getTextNodesIn(document)).each((index, el) => {
-  const $el = $(el);
-  const text = $el.text();
-  let chars = [];
-  let frag = document.createDocumentFragment();
+  const $el = $(el)
+  const text = $el.text()
+  let chars = []
+  let frag = document.createDocumentFragment()
 
   // Walk through the text in this node one character at a time.
   for (const c of text) {
-    let phonetics = yue[c];
-    if (phonetics) {
+    let data = yue[c]
+    if (data) {
       if (chars.length > 0) {
-        frag.appendChild(document.createTextNode(chars.join('')));
-        chars = [];
+        frag.appendChild(document.createTextNode(chars.join('')))
+        chars = []
       }
 
-      const ruby = document.createElement("ruby");
-      ruby.appendChild(document.createTextNode(c));
-      ruby.setAttribute("class", "romanize-yue");
-      const rt = document.createElement("rt");
-      rt.innerHTML = show.yue.standard(phonetics[0]);
+      const ruby = document.createElement("ruby")
+      ruby.appendChild(document.createTextNode(c))
+      ruby.setAttribute("class", "romanize-yue")
+      const rt = document.createElement("rt")
+
+      rt.innerHTML = show.yue.verbose(data[0])
+
       rt.setAttribute("style", "font-size: 100%;")
-      ruby.appendChild(rt);
-      frag.appendChild(ruby);
+      ruby.appendChild(rt)
+      frag.appendChild(ruby)
     } else
-      chars.push(c);
+      chars.push(c)
   }
 
   if (chars.length > 0)
-    frag.appendChild(document.createTextNode(chars.join('')));
+    frag.appendChild(document.createTextNode(chars.join('')))
 
   // Replace the text node with the fragment we've assembled.
-  $el.replaceWith(frag);
+  $el.replaceWith(frag)
 });
 
 // Selects all decendent text nodes of an element.

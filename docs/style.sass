@@ -14,6 +14,9 @@ html
     color: white
     background-color: black
 
+    textarea
+      resize: none
+      
     #head
       height: 5%
       width: 100%
@@ -42,8 +45,7 @@ html
         border: 1px solid
         color: inherit
         background-color: transparent
-        font-family: inherit
-        font-size: inherit
+        font: inherit
         padding: 4px
 
         @media screen and (orientation:landscape)
@@ -85,25 +87,46 @@ html
             background-color: transparent
 
         .syllable
-          &.voiced
+          &.emc
             &.tone-0
-              border-bottom: 1px solid #00F
+              background-image: linear-gradient(to right, #0004, #0004)
             &.tone-1
-              border-bottom: 1px solid #F00
+              background-image: linear-gradient(to right, #0004, #fff4)
             &.tone-2
-              border-bottom: 1px solid #0F0
+              background-image: linear-gradient(to right, #fff4, #0004)
             &.tone-3
-              border-bottom: 1px solid #FF0
-          &:not(.voiced)
-            border-bottom: 0
+              background-image: linear-gradient(to right, #fff4, #fff4)
+          &.yue
+            &.voiced
+              &.tone-0
+                background-image: linear-gradient(to right, #8884, #0004)
+              &.tone-1
+                background-image: linear-gradient(to right, #0004, #8884)
+              &.tone-2
+                background-image: linear-gradient(to right, #0004, #0004)
+              &.tone-3
+                background-image: linear-gradient(to right, #8884, #8884)
+            &:not(.voiced)
+              border-bottom: 0
+              &.tone-0
+                background-image: linear-gradient(to right, #fff4, #8884)
+              &.tone-1
+                background-image: linear-gradient(to right, #8884, #fff4)
+              &.tone-2
+                background-image: linear-gradient(to right, #8884, #8884)
+              &.tone-3
+                background-image: linear-gradient(to right, #fff4, #fff4)
+          &.cmn
             &.tone-0
-              border-top: 1px solid #00F
+              background-image: linear-gradient(to right, #fff4, #fff4)
             &.tone-1
-              border-top: 1px solid #F00
+              background-image: linear-gradient(to right, #0004, #fff4)
             &.tone-2
-              border-top: 1px solid #0F0
+              background-image: linear-gradient(to right, #0004, #0004)
             &.tone-3
-              border-top: 1px solid #FF0
+              background-image: linear-gradient(to right, #fff4, #0004)
+            &.tone-5
+              background-image: linear-gradient(to right, #8884, #8884)
 
   #foot
     height: 5%

@@ -4850,15 +4850,6 @@ const emc = {
   ],
   "背": [
     {
-      "syllable": "buai",
-      "initial": [
-        "b"
-      ],
-      "tone": "2",
-      "voiced": true,
-      "percentage": 50
-    },
-    {
       "syllable": "puai",
       "initial": [
         "p"
@@ -4866,6 +4857,15 @@ const emc = {
       "tone": "2",
       "voiced": false,
       "percentage": null
+    },
+    {
+      "syllable": "buai",
+      "initial": [
+        "b"
+      ],
+      "tone": "2",
+      "voiced": true,
+      "percentage": 50
     }
   ],
   "俻": [
@@ -13888,15 +13888,6 @@ const emc = {
   ],
   "曾": [
     {
-      "syllable": "ʦoŋ",
-      "initial": [
-        "ʦ"
-      ],
-      "tone": "0",
-      "voiced": false,
-      "percentage": 50
-    },
-    {
       "syllable": "ʣoŋ",
       "initial": [
         "ʣ"
@@ -13904,6 +13895,15 @@ const emc = {
       "tone": "0",
       "voiced": true,
       "percentage": null
+    },
+    {
+      "syllable": "ʦoŋ",
+      "initial": [
+        "ʦ"
+      ],
+      "tone": "0",
+      "voiced": false,
+      "percentage": 50
     }
   ],
   "嶒": [
@@ -24130,15 +24130,6 @@ const emc = {
   ],
   "純": [
     {
-      "syllable": "ʣjyn",
-      "initial": [
-        "ʣj"
-      ],
-      "tone": "0",
-      "voiced": true,
-      "percentage": 99
-    },
-    {
       "syllable": "duon",
       "initial": [
         "d"
@@ -24146,6 +24137,15 @@ const emc = {
       "tone": "0",
       "voiced": true,
       "percentage": null
+    },
+    {
+      "syllable": "ʣjyn",
+      "initial": [
+        "ʣj"
+      ],
+      "tone": "0",
+      "voiced": true,
+      "percentage": 99
     },
     {
       "syllable": "ʦjyn",
@@ -33576,15 +33576,6 @@ const emc = {
   ],
   "爹": [
     {
-      "syllable": "da",
-      "initial": [
-        "d"
-      ],
-      "tone": "1",
-      "voiced": true,
-      "percentage": 50
-    },
-    {
       "syllable": "tria",
       "initial": [
         "tr"
@@ -33592,6 +33583,15 @@ const emc = {
       "tone": "0",
       "voiced": false,
       "percentage": null
+    },
+    {
+      "syllable": "da",
+      "initial": [
+        "d"
+      ],
+      "tone": "1",
+      "voiced": true,
+      "percentage": 50
     }
   ],
   "跌": [
@@ -42363,15 +42363,6 @@ const emc = {
   ],
   "費": [
     {
-      "syllable": "byoi",
-      "initial": [
-        "b"
-      ],
-      "tone": "2",
-      "voiced": true,
-      "percentage": 50
-    },
-    {
       "syllable": "p'yoi",
       "initial": [
         "p'"
@@ -42379,6 +42370,15 @@ const emc = {
       "tone": "2",
       "voiced": false,
       "percentage": null
+    },
+    {
+      "syllable": "byoi",
+      "initial": [
+        "b"
+      ],
+      "tone": "2",
+      "voiced": true,
+      "percentage": 50
     },
     {
       "syllable": "pii",
@@ -42549,15 +42549,6 @@ const emc = {
   ],
   "分": [
     {
-      "syllable": "byon",
-      "initial": [
-        "b"
-      ],
-      "tone": "2",
-      "voiced": true,
-      "percentage": 50
-    },
-    {
       "syllable": "pyon",
       "initial": [
         "p"
@@ -42565,6 +42556,15 @@ const emc = {
       "tone": "0",
       "voiced": false,
       "percentage": null
+    },
+    {
+      "syllable": "byon",
+      "initial": [
+        "b"
+      ],
+      "tone": "2",
+      "voiced": true,
+      "percentage": 50
     }
   ],
   "芬": [
@@ -42622,15 +42622,6 @@ const emc = {
   ],
   "氛": [
     {
-      "syllable": "byon",
-      "initial": [
-        "b"
-      ],
-      "tone": "0",
-      "voiced": true,
-      "percentage": 50
-    },
-    {
       "syllable": "p'yon",
       "initial": [
         "p'"
@@ -42638,6 +42629,15 @@ const emc = {
       "tone": "0",
       "voiced": false,
       "percentage": null
+    },
+    {
+      "syllable": "byon",
+      "initial": [
+        "b"
+      ],
+      "tone": "0",
+      "voiced": true,
+      "percentage": 50
     }
   ],
   "衯": [
@@ -78202,33 +78202,6 @@ const emc = {
   ],
   "解": [
     {
-      "syllable": "hre",
-      "initial": [
-        "hr"
-      ],
-      "tone": "2",
-      "voiced": true,
-      "percentage": 50
-    },
-    {
-      "syllable": "hre",
-      "initial": [
-        "hr"
-      ],
-      "tone": "1",
-      "voiced": true,
-      "percentage": 50
-    },
-    {
-      "syllable": "cre",
-      "initial": [
-        "cr"
-      ],
-      "tone": "2",
-      "voiced": false,
-      "percentage": 50
-    },
-    {
       "syllable": "cre",
       "initial": [
         "cr"
@@ -78236,6 +78209,33 @@ const emc = {
       "tone": "1",
       "voiced": false,
       "percentage": null
+    },
+    {
+      "syllable": "hre",
+      "initial": [
+        "hr"
+      ],
+      "tone": "2",
+      "voiced": true,
+      "percentage": 50
+    },
+    {
+      "syllable": "hre",
+      "initial": [
+        "hr"
+      ],
+      "tone": "1",
+      "voiced": true,
+      "percentage": 50
+    },
+    {
+      "syllable": "cre",
+      "initial": [
+        "cr"
+      ],
+      "tone": "2",
+      "voiced": false,
+      "percentage": 50
     }
   ],
   "檞": [
@@ -149722,18 +149722,18 @@ const emc = {
       "initial": [
         "sj"
       ],
-      "tone": "2",
+      "tone": "1",
       "voiced": false,
-      "percentage": 70
+      "percentage": null
     },
     {
       "syllable": "sjeu",
       "initial": [
         "sj"
       ],
-      "tone": "1",
+      "tone": "2",
       "voiced": false,
-      "percentage": null
+      "percentage": 70
     }
   ],
   "䒚": [
@@ -151604,15 +151604,6 @@ const emc = {
   ],
   "省": [
     {
-      "syllable": "sieŋ",
-      "initial": [
-        "s"
-      ],
-      "tone": "1",
-      "voiced": false,
-      "percentage": 50
-    },
-    {
       "syllable": "srieŋ",
       "initial": [
         "sr"
@@ -151620,6 +151611,15 @@ const emc = {
       "tone": "1",
       "voiced": false,
       "percentage": null
+    },
+    {
+      "syllable": "sieŋ",
+      "initial": [
+        "s"
+      ],
+      "tone": "1",
+      "voiced": false,
+      "percentage": 50
     }
   ],
   "眚": [
@@ -182100,18 +182100,18 @@ const emc = {
       "initial": [
         "cr"
       ],
-      "tone": "0",
+      "tone": "2",
       "voiced": false,
-      "percentage": 99
+      "percentage": null
     },
     {
       "syllable": "cren",
       "initial": [
         "cr"
       ],
-      "tone": "2",
+      "tone": "0",
       "voiced": false,
-      "percentage": null
+      "percentage": 99
     },
     {
       "syllable": "hren",
@@ -195979,18 +195979,18 @@ const emc = {
       "initial": [
         "q"
       ],
-      "tone": "0",
+      "tone": "2",
       "voiced": false,
-      "percentage": 70
+      "percentage": null
     },
     {
       "syllable": "qen",
       "initial": [
         "q"
       ],
-      "tone": "2",
+      "tone": "0",
       "voiced": false,
-      "percentage": null
+      "percentage": 70
     }
   ],
   "㷳": [
@@ -201246,15 +201246,6 @@ const emc = {
   ],
   "已": [
     {
-      "syllable": "ji",
-      "initial": [
-        "j"
-      ],
-      "tone": "1",
-      "voiced": false,
-      "percentage": 99
-    },
-    {
       "syllable": "zi",
       "initial": [
         "z"
@@ -201262,6 +201253,15 @@ const emc = {
       "tone": "1",
       "voiced": true,
       "percentage": null
+    },
+    {
+      "syllable": "ji",
+      "initial": [
+        "j"
+      ],
+      "tone": "1",
+      "voiced": false,
+      "percentage": 99
     },
     {
       "syllable": "ji",

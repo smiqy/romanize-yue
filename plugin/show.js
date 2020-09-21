@@ -42,25 +42,24 @@ const show = {
       ).normalize("NFC"),
 
     verbose: ({ initial, nucleus, terminal, tone, voiced, short }) => {
-      if(short)
-        //terminal += terminal
-        nucleus += "\u0306" //"\u032F"
+      if (short)
+        nucleus += "\u0306"
       tone = (voiced
         ? ["\u0316", "\u0317", "\u0331", "\u0329"]
         : ["\u0300", "\u0301", "\u0304", "\u030D"])[tone]
 
-        return reduceReplace(initial + nucleus + terminal + tone, [
-            [/nj/, "ɲ"],
-            [/zj/, "ᶎ"],
-            [/sj/, "ᶊ"],
-            [/(?<=[ʣʦ])j/, "\u0321"],
-            [/nr/, "ɳ"],
-            [/zr/, "ʐ"],
-            [/sr/, "ʂ"],
-            [/(?<=[ʣʦ])r/, "\u0322"],
-            [/j/, "ȷ"],
-            [/i/, "ı"],
-        ]).normalize("NFC")
+      return reduceReplace(initial + nucleus + terminal + tone, [
+        [/nj/, "ɲ"],
+        [/zj/, "ᶎ"],
+        [/sj/, "ᶊ"],
+        [/(?<=[ʣʦ])j/, "\u0321"],
+        [/nr/, "ɳ"],
+        [/zr/, "ʐ"],
+        [/sr/, "ʂ"],
+        [/(?<=[ʣʦ])r/, "\u0322"],
+        [/j/, "ȷ"],
+        [/i/, "ı"],
+      ]).normalize("NFC")
     },
 
     simple: ({ syllable, tone, voiced }) => {
@@ -113,15 +112,19 @@ const show = {
 
     ipa: ({ syllable, tone, voiced, short }) => {
       syllable = reduceReplace(syllable, [
-        [/i/, "iː"],
-        [/oi$/, "ɔːy"],
-        [/ui$/, "uːy"],
-        [/o(?!u$)/, "ɔː"],
-        [/e(?!i$)/, "ɛː"],
+        [/ə/, "ɐ"],
         [/y/, "yː"],
+        [/(?<![iyueøoəa])i/, "iː"],
+
         [/øi$/, "ɵy"],
         [/ø(?=n$)/, "ɵ"],
         [/ø/, "œː"],
+
+        [/oi$/, "ɔːy"],
+        [/o(?!u$)/, "ɔː"],
+        [/e(?!i$)/, "ɛː"],
+
+        [/ui$/, "uːy"],
 
         [/^q/, ""],
 
@@ -133,6 +136,7 @@ const show = {
 
         [/^[ʣʦ]r/, "ʈʂ"],
         [/^[zs]r/, "ʂ"],
+        [/^nr/, "ɳ"],
 
         [/^[ʣʦ]j/, "tɕ"],
         [/^[zs]j/, "ɕ"],
@@ -141,7 +145,7 @@ const show = {
         [/^[ʣʦ]/, "ts"],
 
         [/^[wf]/, "f"],
-        [/^v/, "W"],
+        [/^v/, "w"],
         [/v/, "ʷ"],
 
         [/^m$/, "m̩"],

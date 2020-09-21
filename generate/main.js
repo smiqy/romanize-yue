@@ -296,6 +296,7 @@ for (const [k, v] of Object.entries(pinyin)) {
 
           [/(?<=^[bpmf])o/, "uo"],
           [/(?<=^[jqx])u/, "ü"],
+
           [/^j/, "g"],
           [/^q/, "k"],
           [/^h/, "x"],
@@ -317,7 +318,9 @@ for (const [k, v] of Object.entries(pinyin)) {
           [/ui$/, "uei"],
           [/un$/, "uen"],
           [/oŋ$/, "ueŋ"],
+          [/yn$/, "yen"],
 
+          [/o/, "e"],
           [/c/g, "ʦ"],
           [/z/g, "ʣ"],
           [/k/g, "c"],
@@ -337,18 +340,10 @@ for (const [k, v] of Object.entries(pinyin)) {
         else if (emcs.some(emc => /^[ij]/.test(emc.syllable)))
           syllable = syllable.replace(/^r/, "j").replace(/^er$/, "ej");
 
-        if (emcs.some(emc => /^[ʣʦsz]r/.test(emc.syllable)))
-          syllable = syllable
-            .replace(/^g(?=[iy])/, "ʣr")
-            .replace(/^c(?=[iy])/, "ʦr")
-            .replace(/^x(?=[iy])/, "sr");
-        else if (emcs.some(emc => /^[ʣʦsz]j/.test(emc.syllable)))
-          syllable = syllable
-            .replace(/^g(?=[iy])/, "ʣj")
-            .replace(/^c(?=[iy])/, "ʦj")
-            .replace(/^x(?=[iy])/, "sj")
-            .replace(/(?<=^[ʣʦs])r/, "j");
-        else if (emcs.some(emc => /^[ʣʦsz]/.test(emc.syllable)))
+        if (emcs.some(emc => /m$/.test(emc.syllable)))
+          syllable = syllable.replace(/n$/, "m");
+
+        if (emcs.some(emc => /^[ʣʦsz]/.test(emc.syllable)))
           syllable = syllable
             .replace(/^g(?=[iy])/, "ʣ")
             .replace(/^c(?=[iy])/, "ʦ")

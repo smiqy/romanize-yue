@@ -11,6 +11,8 @@ html {
     font-weight: 300;
     color: white;
     background-color: black; }
+    html body textarea {
+      resize: none; }
     html body #head {
       height: 5%;
       width: 100%;
@@ -36,8 +38,7 @@ html {
         border: 1px solid;
         color: inherit;
         background-color: transparent;
-        font-family: inherit;
-        font-size: inherit;
+        font: inherit;
         padding: 4px; }
         @media screen and (orientation: landscape) {
           html body #body #source, html body #body .sink {
@@ -73,24 +74,42 @@ html {
             width: 100%;
             margin: 0;
             background-color: transparent; }
-        html body #body .sink .syllable.voiced.tone-0 {
-          border-bottom: 1px solid #00F; }
-        html body #body .sink .syllable.voiced.tone-1 {
-          border-bottom: 1px solid #F00; }
-        html body #body .sink .syllable.voiced.tone-2 {
-          border-bottom: 1px solid #0F0; }
-        html body #body .sink .syllable.voiced.tone-3 {
-          border-bottom: 1px solid #FF0; }
-        html body #body .sink .syllable:not(.voiced) {
+        html body #body .sink .syllable.emc.tone-0 {
+          background-image: linear-gradient(to right, #0004, #0004); }
+        html body #body .sink .syllable.emc.tone-1 {
+          background-image: linear-gradient(to right, #0004, #fff4); }
+        html body #body .sink .syllable.emc.tone-2 {
+          background-image: linear-gradient(to right, #fff4, #0004); }
+        html body #body .sink .syllable.emc.tone-3 {
+          background-image: linear-gradient(to right, #fff4, #fff4); }
+        html body #body .sink .syllable.yue.voiced.tone-0 {
+          background-image: linear-gradient(to right, #8884, #0004); }
+        html body #body .sink .syllable.yue.voiced.tone-1 {
+          background-image: linear-gradient(to right, #0004, #8884); }
+        html body #body .sink .syllable.yue.voiced.tone-2 {
+          background-image: linear-gradient(to right, #0004, #0004); }
+        html body #body .sink .syllable.yue.voiced.tone-3 {
+          background-image: linear-gradient(to right, #8884, #8884); }
+        html body #body .sink .syllable.yue:not(.voiced) {
           border-bottom: 0; }
-          html body #body .sink .syllable:not(.voiced).tone-0 {
-            border-top: 1px solid #00F; }
-          html body #body .sink .syllable:not(.voiced).tone-1 {
-            border-top: 1px solid #F00; }
-          html body #body .sink .syllable:not(.voiced).tone-2 {
-            border-top: 1px solid #0F0; }
-          html body #body .sink .syllable:not(.voiced).tone-3 {
-            border-top: 1px solid #FF0; }
+          html body #body .sink .syllable.yue:not(.voiced).tone-0 {
+            background-image: linear-gradient(to right, #fff4, #8884); }
+          html body #body .sink .syllable.yue:not(.voiced).tone-1 {
+            background-image: linear-gradient(to right, #8884, #fff4); }
+          html body #body .sink .syllable.yue:not(.voiced).tone-2 {
+            background-image: linear-gradient(to right, #8884, #8884); }
+          html body #body .sink .syllable.yue:not(.voiced).tone-3 {
+            background-image: linear-gradient(to right, #fff4, #fff4); }
+        html body #body .sink .syllable.cmn.tone-0 {
+          background-image: linear-gradient(to right, #fff4, #fff4); }
+        html body #body .sink .syllable.cmn.tone-1 {
+          background-image: linear-gradient(to right, #0004, #fff4); }
+        html body #body .sink .syllable.cmn.tone-2 {
+          background-image: linear-gradient(to right, #0004, #0004); }
+        html body #body .sink .syllable.cmn.tone-3 {
+          background-image: linear-gradient(to right, #fff4, #0004); }
+        html body #body .sink .syllable.cmn.tone-5 {
+          background-image: linear-gradient(to right, #8884, #8884); }
   html #foot {
     height: 5%;
     width: 100%;
