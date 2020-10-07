@@ -6,7 +6,7 @@ $(getTextNodesIn(document)).each((index, el) => {
 
   // Walk through the text in this node one character at a time.
   for (const c of text) {
-    let data = yue[c]
+    let data = cmn[c]
     if (data) {
       if (chars.length > 0) {
         frag.appendChild(document.createTextNode(chars.join('')))
@@ -15,12 +15,12 @@ $(getTextNodesIn(document)).each((index, el) => {
 
       const ruby = document.createElement("ruby")
       ruby.appendChild(document.createTextNode(c))
-      ruby.setAttribute("class", "romanize-yue")
+      ruby.setAttribute("class", "romanize-cmn")
       const rt = document.createElement("rt")
 
-      rt.innerHTML = show.yue.verbose(data[0])
+      rt.innerHTML = show.cmn.simple(data[0])
 
-      rt.setAttribute("style", "font-size: 100%;")
+      rt.setAttribute("style", "font-size: 100%; font-family: 'Noto Sans';")
       ruby.appendChild(rt)
       frag.appendChild(ruby)
     } else

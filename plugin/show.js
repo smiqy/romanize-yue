@@ -1,22 +1,26 @@
-
 const reduceReplace = (s, xys) =>
   xys.reduce((acc, [x, y]) => acc.replace(x, y), s);
+
+const hook = s =>
+  reduceReplace(s, [
+    [/nj/, "ɲ"],
+    [/zj/, "ᶎ"],
+    [/sj/, "ᶊ"],
+    [/nr/, "ɳ"],
+    [/zr/, "ʐ"],
+    [/sr/, "ʂ"],
+    [/dr/, "ɖ"],
+    [/tr/, "ʈ"],
+    [/(?<=[ʣʦ])j/, "\u0321"],
+    [/(?<=[ʣʦ])r/, "\u0322"],
+  ])
+
 
 const show = {
   emc: {
     standard: ({ syllable, tone }) =>
       (
-        reduceReplace(syllable, [
-          [/nj/, "ɲ"],
-          [/zj/, "ᶎ"],
-          [/sj/, "ᶊ"],
-          [/nr/, "ɳ"],
-          [/zr/, "ʐ"],
-          [/sr/, "ʂ"],
-          [/dr/, "ɖ"],
-          [/tr/, "ʈ"],
-          [/(?<=[ʣʦ])j/, "\u0321"],
-          [/(?<=[ʣʦ])r/, "\u0322"],
+        reduceReplace(hook(syllable), [
           // [/'/, "\u0315"],
           [/j/g, "ȷ"],
           [/i/g, "ı"],])
@@ -26,20 +30,45 @@ const show = {
   yue: {
     standard: ({ syllable, tone }) =>
       (
-        reduceReplace(syllable, [
-          [/nj/, "ɲ"],
-          [/zj/, "ᶎ"],
-          [/sj/, "ᶊ"],
-          [/(?<=[ʣʦ])j/, "\u0321"],
-          [/nr/, "ɳ"],
-          [/zr/, "ʐ"],
-          [/sr/, "ʂ"],
-          [/(?<=[ʣʦ])r/, "\u0322"],
+        reduceReplace(hook(syllable), [
           [/j/, "ȷ"],
           [/i/, "ı"],
         ])
         + ["\u0300", "\u0301", "\u0304", "\u030D"][tone]
       ).normalize("NFC"),
+
+    conservative: ({ syllable, initial, tone }) => {
+      if (/'$/.test(initial))
+        syllable = reduceReplace(syllable, [
+          [/'/, ""],
+          ["g", "c"]
+          ["d", "t"]
+          ["ʣ", "ʦ"]
+          ["p", "b"]
+        ])
+      else
+        syllable = reduceReplace(syllable, [
+          ["c", "g"]
+          ["t", "d"]
+          ["ʦ", "ʣ"]
+          ["b", "p"]
+        ])
+      syllable = hook(reduceReplace(syllable, [
+        [/^q/, ""],
+        [/^w/, "f"],
+        [/^z/, "s"],
+        [/^h/, "x"],
+
+        [/j/, "ȷ"],
+        [/i/, "ı"],
+      ]))
+
+      tone = (voiced
+        ? ["\u0300", "\u030C", "\u1DC5", "\u0306\u030C"]
+        : ["\u0302", "\u0301", "\u0304", "\u0306\u0302"])[tone]
+
+      return (syllable + tone).normalize("NFC")
+    },
 
     verbose: ({ initial, nucleus, terminal, tone, voiced, short }) => {
       if (short)
@@ -48,18 +77,11 @@ const show = {
         ? ["\u0316", "\u0317", "\u0331", "\u0329"]
         : ["\u0300", "\u0301", "\u0304", "\u030D"])[tone]
 
-      return reduceReplace(initial + nucleus + terminal + tone, [
-        [/nj/, "ɲ"],
-        [/zj/, "ᶎ"],
-        [/sj/, "ᶊ"],
-        [/(?<=[ʣʦ])j/, "\u0321"],
-        [/nr/, "ɳ"],
-        [/zr/, "ʐ"],
-        [/sr/, "ʂ"],
-        [/(?<=[ʣʦ])r/, "\u0322"],
+      return reduceReplace(hook(initial + nucleus + terminal + tone), [
         [/j/, "ȷ"],
         [/i/, "ı"],
-      ]).normalize("NFC")
+      ])
+        .normalize("NFC")
     },
 
     simple: ({ syllable, tone, voiced }) => {
@@ -67,7 +89,7 @@ const show = {
         ? ["\u0300", "\u030C", "\u1DC5", "\u030F"]
         : ["\u0302", "\u0301", "\u0304", "\u030B"])[tone]
 
-      syllable = reduceReplace(syllable, [
+      syllable = hook(reduceReplace(syllable, [
         [/g/g, "c"],
         [/h/g, "x"],
         [/d/g, "t"],
@@ -85,18 +107,13 @@ const show = {
 
         [/(?<=(cv?|t|ʦ[jr]?|p))'/g, ""],
 
-        [/ʣ/g, "z"],
-        [/c/g, "k"],
-        [/ʦ/g, "c"],
+        //[/ʣ/g, "z"],
+        //[/c/g, "k"],
+        //[/ʦ/g, "c"],
 
-        [/nr/, "n"],
-        [/nj/, "ɲ"],
-        [/c[jr]/, "ꞔ"],
-        [/z[jr]/, "ᶎ"],
-        [/s[jr]/, "ᶊ"],
         [/i/g, "ı"],
         [/j/g, "ȷ"],
-      ])
+      ]))
 
       return (syllable + tone).normalize("NFC");
     },
@@ -106,15 +123,15 @@ const show = {
         [/ŋ/g, "k"],
         [/ʣ/g, "dz"],
         [/ʦ/g, "ts"],
-        [/ø/g, "eo"],
-        [/ə/g, "^"],
+        [/ø/g, "io"],
+        [/ə/g, "ue"],
       ]) + ["\\", "/", "-", "|"][tone],
 
     ipa: ({ syllable, tone, voiced, short }) => {
       syllable = reduceReplace(syllable, [
+        [/(?<![iyueøoəa])i/, "iː"],
         [/ə/, "ɐ"],
         [/y/, "yː"],
-        [/(?<![iyueøoəa])i/, "iː"],
 
         [/øi$/, "ɵy"],
         [/ø(?=n$)/, "ɵ"],
@@ -169,11 +186,7 @@ const show = {
   cmn: {
     standard: ({ syllable, tone }) =>
       (
-        reduceReplace(syllable, [
-          [/nj/g, "ɲ"],
-          [/nr/g, "ɳ"],
-          [/(?<=[ʣʦs])j/g, "\u0321"],
-          [/(?<=[ʣʦs])r/g, "\u0322"],
+        reduceReplace(hook(syllable), [
           [/i/g, "ı"],
           [/j/g, "ȷ"],
         ])
@@ -183,19 +196,60 @@ const show = {
     simple: ({ syllable, tone }) =>
       (
         syllable
+          .replace(/ʦ/, "ts")
+          .replace(/ʣ/, "ds")
+
           .replace(/e(?=[ŋnm])/, "")
-          .replace(/(?=[iuy])e(?=[iu])/, "")
-          .replace(/c/g, "k")
-          .replace(/ʣ/g, "z")
-          .replace(/ʦ/g, "c")
+          .replace(/(?<=[iuy])e(?=[iu])/, "")
 
           .replace(/n[jr]/, "ɳ")
-          .replace(/(?<=[zcs])[jr]/, "\u0322")
+          .replace(/s[jr]/, "ʂ")
 
-          .replace(/[ktp](?=.$)/, "")
+          .replace(/[ctp]$/, "")
 
           .replace(/i/g, "ı")
           .replace(/j/g, "ȷ")
+        + ["\u0301", "\u030C", "\u0300", "\u0302", "\u0307"][tone]
+      ).normalize("NFC"),
+
+    "simple cyrillic": ({ syllable, tone }) =>
+      (
+        syllable
+          .replace(/e(?=[ŋnm])/, "")
+          .replace(/(?<=[iuy])e(?=[iu])/, "")
+          .replace(/[ctp]$/, "")
+
+          .replace(/b/g, "б")
+          .replace(/p/g, "п")
+          .replace(/m/g, "м")
+          .replace(/f/g, "ф")
+
+          .replace(/d/g, "д")
+          .replace(/t/g, "т")
+          .replace(/n/g, "н")
+          .replace(/l/g, "л")
+
+          .replace(/ʣ[jr]/g, "џ")
+          .replace(/ʦ[jr]/g, "ч")
+          .replace(/s[jr]/g, "ш")
+          .replace(/n[jr]/g, "ԩ")
+          .replace(/r/g, "р")
+
+          .replace(/ʣ/g, "ѕ")
+          .replace(/ʦ/g, "ц")
+          .replace(/s/g, "с")
+
+          .replace(/g/g, "г")
+          .replace(/c/g, "к")
+          .replace(/ŋ/g, "ӈ")
+          .replace(/x/g, "х")
+
+          .replace(/i/g, "и")
+          .replace(/u/g, "у")
+          .replace(/y/g, "ѵ")
+          .replace(/e/g, "э")
+          .replace(/a/g, "а")
+
         + ["\u0301", "\u030C", "\u0300", "\u0302", "\u0307"][tone]
       ).normalize("NFC"),
   },

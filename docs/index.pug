@@ -20,25 +20,38 @@ html
       input(type="checkbox")#uppercase.trigger
       label uppercase
       select#alphabet.trigger
-        for value in ["standard", "verbose", "simple", "IPA", "ASCII"]
+        for value in ["standard", "standard cyrillic", "verbose", "simple", "simple cyrillic", "ASCII", "IPA", "conservative"]
           option(value=value.toLowerCase())= value
     #body
-      textarea#source.trigger
-        | 春眠不覺曉
-        | 處處聞啼鳥
-        | 夜來風雨聲
-        | 花落知多少
-        |
-        | 幫 滂 竝 明
-        | 非 敷 奉 微
-        | 端 透 定 泥
-        |         來
-        | 知 徹 澄 娘
-        | 精 清 從    心 邪
-        | 莊 初 崇    生 俟
-        | 章 昌 常 日 書 船
-        | 見 溪 群 疑
-        | 影       曉 曉 匣
+      textarea#source.trigger.
+        千字文
+        天地玄黃 宇宙洪荒
+        日月盈昃 辰宿列張
+        寒來暑往 秋收冬藏
+        閏餘成歲 律呂調陽
+        雲騰致雨 露結爲霜
+        金生麗水 玉出崑岡
+        劍號巨闕 珠稱夜光
+        果珍李柰 菜重芥薑
+        海鹹河淡 鱗潛羽翔
+        龍師火帝 鳥官人皇
+        始制文字 乃服衣裳
+        推位讓國 有虞陶唐
+        弔民伐罪 周發殷湯
+        坐朝問道 垂拱平章
+        愛育黎首 臣伏戎羌
+        遐邇壹體 率賓歸王
+
+        幫 滂 竝 明
+        非 敷 奉 微
+        端 透 定 泥
+                來
+        知 徹 澄 娘
+        精 清 從    心 邪
+        莊 初 崇    生 俟
+        章 昌 常 日 書 船
+        見 溪 群 疑
+        影       曉 曉 匣
       for lang in langs
         div(id=lang).sink
     #foot
