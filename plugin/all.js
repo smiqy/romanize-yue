@@ -4,12 +4,12 @@
 const replace = (s, replacements) =>
     replacements.reduce((acc, replacement) => acc.replace(...replacement), s);
 
-const fromJyutpingPre = jyutping => {
+const fromJyutping = jyutping => {
     let [syllable, tone] = jyutping.match(/^([a-z]+)([1-6])$/).slice(1);
 
     syllable = replace(syllable, [
-        [/a/g, "ə"],
-        [/əə/, "a"],
+        [/a/g, "ӑ"],
+        [/ӑӑ/, "a"],
         [/yu/g, "y"],
         [/oe|eo/, "ø"],
         [/^c/, "ŧ"],
@@ -22,8 +22,8 @@ const fromJyutpingPre = jyutping => {
         [/j(?=[iyø])/g, ""],
         [/v(?=u)/g, ""],
 
-        [/(?<=[iyueøoəa])i$/, "j"],
-        [/(?<=[iyueøoəa])u$/, "v"],
+        [/(?<=[iyueøoӑa])i$/, "j"],
+        [/(?<=[iyueøoӑa])u$/, "v"],
 
         [/^k/, "kx"],
         [/^c/, "k"],
@@ -52,10 +52,6 @@ const fromJyutpingPre = jyutping => {
     voiced = 4 <= tone;
     tone %= 4;
 
-    return [syllable, tone, voiced];
-};
-
-const fromJyutpingPost = (syllable, tone, voiced) => {
     syllable = syllable
         .replace(/(?<!^)([jv])x/, "x$1");
 
@@ -72,37 +68,26 @@ const fromJyutpingPost = (syllable, tone, voiced) => {
             [/^f/, "w"],
         ]);
 
-        if ([0, 1].includes(tone)) {
+        if ([0, 1].includes(tone))
             syllable = syllable
                 .replace(/(?<=[cdđḍb])(?!x)/, "h")
                 .replace(/(?<=[cdđḍb])x/, "");
-        }
-    } else {
+    } else
         syllable = syllable
-            .replace(/^(?=[gnlmjviyueøoəa])/, "q");
-    }
+            .replace(/^(?=[gnlmjviyueøoӑa])/, "q");
 
-    return [syllable, tone, voiced];
+    syllable = syllable
+
+    return tone == 3
+        ? syllable
+            .replace(/g$/, "k")
+            .replace(/n$/, "t")
+            .replace(/m$/, "p")
+        : syllable
+            .replace(/(?<=[iyueøoӑa])|^[gm]$/, ["\u0300", "\u0301", ""][tone])
+            .normalize("NFC");
+
 };
-
-const fromJyutping = jyutping => fromJyutpingPost(...fromJyutpingPre(jyutping));
-
-const number = (syllable, tone) =>
-    syllable + tone;
-
-const latin = (syllable, tone) =>
-    number(syllable, tone)
-        .replace(/0$/, "x")
-        .replace(/1$/, "h")
-        .replace(/2$/, "")
-        .replace(/g3$/, "k")
-        .replace(/n3$/, "t")
-        .replace(/m3$/, "p");
-
-const diacritic = (syllable, tone) =>
-    latin(syllable, tone)
-        .replace(/x$/, "ˋ")
-        .replace(/h$/, "ˊ")
 
 // Get all the text nodes in the document, and replace any Chinese characters found with Jyutping.
 $(getTextNodesIn(document)).each(function (index, el) {
@@ -125,7 +110,7 @@ $(getTextNodesIn(document)).each(function (index, el) {
                 const ruby = document.createElement('ruby');
                 const rt = document.createElement('rt');
                 ruby.appendChild(document.createTextNode(c));
-                rt.appendChild(document.createTextNode(latin(...fromJyutping(jyutping))));
+                rt.appendChild(document.createTextNode(fromJyutping(jyutping)));
                 rt.setAttribute("style", "font-size: 80%;")
                 ruby.appendChild(rt);
                 frag.appendChild(ruby);
